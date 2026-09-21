@@ -317,9 +317,12 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       setTimeout(() => {
         setFeedback('none');
         setSelectedOption(null);
-        if (gameState === 'playing') {
-          setCurrentQuestion(generateQuestion(nextStep, nextCorrect, startTime));
-        }
+        setGameState((currentGameState) => {
+          if (currentGameState === 'playing') {
+            setCurrentQuestion(generateQuestion(nextStep, nextCorrect, startTime));
+          }
+          return currentGameState;
+        });
       }, delayMs);
     },
     [gameState, currentQuestion, feedback, correctCount, generateQuestion, onPlayCorrect, onPlayWrong]
