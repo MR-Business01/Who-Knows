@@ -1,10 +1,11 @@
 import React from 'react';
 import { Volume2, VolumeX, Maximize2, Minimize2, Users, Trophy, Settings } from 'lucide-react';
-import type { TimerSetting, DifficultySetting } from '../hooks/useGameEngine';
+import type { TimerSetting, DifficultySetting, GameMode } from '../hooks/useGameEngine';
 
 interface NavbarProps {
   score: number;
   highScore: number;
+  gameMode: GameMode;
   timerSetting: TimerSetting;
   difficultySetting: DifficultySetting;
   soundEnabled: boolean;
@@ -18,6 +19,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   score,
   highScore,
+  gameMode,
   timerSetting,
   difficultySetting,
   soundEnabled,
@@ -32,11 +34,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Brand Title */}
       <div className="flex items-center gap-2">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
-          <span className="text-xl">🏎️</span>
+          <span className="text-xl">{gameMode === 'flags' ? '🚩' : '🏎️'}</span>
         </div>
         <div>
           <h1 className="text-base font-black tracking-tight text-white leading-tight flex items-center gap-1.5">
-            CARS <span className="text-cyan-400">QUIZ</span>
+            {gameMode === 'flags' ? 'FLAGS' : 'CARS'} <span className="text-cyan-400">QUIZ</span>
           </h1>
           <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
             <span className="flex items-center gap-1">

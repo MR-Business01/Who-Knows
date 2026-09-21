@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import type { CarLogo } from '../data/carLogos';
-import type { FeedbackState } from '../hooks/useGameEngine';
-import { Maximize2, ShieldAlert } from 'lucide-react';
+import type { CountryFlag } from '../data/flagLogos';
+import type { FeedbackState, GameMode } from '../hooks/useGameEngine';
+import { Maximize2, ShieldAlert, Landmark } from 'lucide-react';
 
 interface LogoCardProps {
-  logo: CarLogo | null;
+  logo: CarLogo | CountryFlag | null;
+  capitalHint?: string;
+  gameMode?: GameMode;
   feedback: FeedbackState;
   onToggleFullscreen: () => void;
 }
 
-export const LogoCard: React.FC<LogoCardProps> = ({ logo, feedback, onToggleFullscreen }) => {
+export const LogoCard: React.FC<LogoCardProps> = ({
+  logo,
+  capitalHint,
+  gameMode = 'cars',
+  feedback,
+  onToggleFullscreen,
+}) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
-  }, [logo?.id]);
+  }, [logo?.id, gameMode]);
 
   let borderClasses = 'border-slate-300/60 shadow-2xl shadow-blue-950/40';
   if (feedback === 'correct') {
@@ -29,7 +38,7 @@ export const LogoCard: React.FC<LogoCardProps> = ({ logo, feedback, onToggleFull
     <div className="w-full max-w-md mx-auto px-4 flex-1 flex flex-col items-center justify-center min-h-[260px] max-h-[42vh] relative">
       <div
         className={`w-full h-full rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-300 border ${borderClasses}`}
-        style={{ backgroundColor: 'rgba(235, 238, 243, 0.88)', backdropFilter: 'blur(16px)' }}
+        style={{ backgroundColor: 'rgba(235, 238, 243, 0.92)', backdropFilter: 'blur(16px)' }}
       >
         {/* Fullscreen Focus Floating Icon */}
         <button
@@ -47,11 +56,19 @@ export const LogoCard: React.FC<LogoCardProps> = ({ logo, feedback, onToggleFull
           </div>
         )}
 
-        {/* Logo Image */}
+        {/* Capital Hint Pill for Flags Quiz */}
+        {gameMode === 'flags' && capitalHint && (
+          <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700 text-cyan-300 text-[11px] font-bold flex items-center gap-1 shadow-md z-10">
+            <Landmark className="w-3 h-3 text-amber-400" />
+            <span>Capital: {capitalHint}</span>
+          </div>
+        )}
+
+        {/* Logo / Flag Image */}
         {logo && !hasError ? (
           <img
             src={logo.image_url}
-            alt="Guess this Car Logo"
+            alt={gameMode === 'flags' ? 'Guess this Country Flag' : 'Guess this Car Logo'}
             className={`max-w-full max-h-[220px] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition-all duration-300 ${
               isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
             }`}
@@ -65,8 +82,10 @@ export const LogoCard: React.FC<LogoCardProps> = ({ logo, feedback, onToggleFull
           /* Error / Fallback Card */
           <div className="flex flex-col items-center justify-center text-center p-4">
             <ShieldAlert className="w-12 h-12 text-amber-500 mb-2 animate-bounce" />
-            <p className="text-sm font-semibold text-slate-800">Logo Image Preview</p>
-            <p className="text-xs text-slate-600 mt-1 font-mono">{logo?.brand || 'Car Company Logo'}</p>
+            <p className="text-sm font-semibold text-slate-800">
+              {gameMode === 'flags' ? 'World Flag Image' : 'Car Logo Image'}
+            </p>
+            <p className="text-xs text-slate-600 mt-1 font-mono">{logo?.brand || 'Quiz Image'}</p>
           </div>
         )}
       </div>

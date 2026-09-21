@@ -9,6 +9,7 @@ import { AnswerOptions } from './components/AnswerOptions';
 import { StatsModal } from './components/StatsModal';
 import { MultiplayerModal } from './components/MultiplayerModal';
 import { SettingsModal } from './components/SettingsModal';
+import { GameSelector } from './components/GameSelector';
 import { AdContainer } from './components/AdContainer';
 import { Play, Trophy, ShieldCheck, Zap, Settings, Gauge } from 'lucide-react';
 
@@ -22,6 +23,8 @@ export function App() {
 
   const {
     gameState,
+    gameMode,
+    updateGameMode,
     timeLeft,
     timerSetting,
     difficultySetting,
@@ -40,6 +43,10 @@ export function App() {
     handleAnswer,
   } = useGameEngine(playCorrect, playWrong, playGameOver);
 
+  const heroIcon = gameMode === 'flags' ? '🚩' : '🏎️';
+  const gameTitle = gameMode === 'flags' ? 'WORLD FLAGS' : 'CARS LOGO';
+  const gameDesc = gameMode === 'flags' ? 'Identify world countries by their flags' : 'Test your car brand knowledge';
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-between py-4 px-2 select-none relative overflow-hidden">
       <div className="absolute top-[-10%] left-[20%] w-[300px] h-[300px] bg-blue-600/15 rounded-full blur-[100px] pointer-events-none" />
@@ -49,6 +56,7 @@ export function App() {
         <Navbar
           score={score}
           highScore={highScore}
+          gameMode={gameMode}
           timerSetting={timerSetting}
           difficultySetting={difficultySetting}
           soundEnabled={soundEnabled}
@@ -63,19 +71,22 @@ export function App() {
 
         {gameState === 'idle' ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-4 my-auto">
+            {/* Category Selector */}
+            <GameSelector gameMode={gameMode} onSelectGameMode={updateGameMode} />
+
             {/* Hero Icon */}
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 p-0.5 shadow-2xl shadow-blue-500/30 mb-5 animate-pulse-glow relative">
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 p-0.5 shadow-2xl shadow-blue-500/30 mb-4 animate-pulse-glow relative">
               <div className="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center">
-                <span className="text-5xl">🏎️</span>
+                <span className="text-5xl">{heroIcon}</span>
               </div>
             </div>
 
             <h1 className="text-3xl font-black text-white tracking-tight mb-1">
-              CARS LOGO <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">QUIZ</span>
+              {gameTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">QUIZ</span>
             </h1>
 
             <p className="text-xs text-slate-300 font-medium max-w-xs mb-5">
-              Identify as many car company logos as possible in <strong className="text-cyan-400 font-bold">{timerSetting} seconds</strong>.
+              {gameDesc} in <strong className="text-cyan-400 font-bold">{timerSetting} seconds</strong>.
             </p>
 
             {/* Start Button */}
@@ -128,6 +139,8 @@ export function App() {
 
             <LogoCard
               logo={currentQuestion?.logo || null}
+              capitalHint={currentQuestion?.capitalHint}
+              gameMode={gameMode}
               feedback={feedback}
               onToggleFullscreen={toggleFullscreen}
             />
@@ -147,7 +160,7 @@ export function App() {
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Mobile-First Edition
           </span>
           <span className="flex items-center gap-1 text-slate-400">
-            <Zap className="w-3.5 h-3.5 text-cyan-400" /> 210 Mapped Logos
+            <Zap className="w-3.5 h-3.5 text-cyan-400" /> {gameMode === 'flags' ? '150 Countries' : '210 Logos'}
           </span>
         </footer>
       </div>

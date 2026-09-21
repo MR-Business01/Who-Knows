@@ -23,16 +23,18 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
     }
   }, [stats.isNewHighScore]);
 
+  const gameCategoryTitle = stats.gameMode === 'flags' ? 'World Flags Quiz' : 'Cars Logo Quiz';
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Cars Logo Quiz Score',
-        text: `🏎️ I scored ${stats.score} PTS in the ${stats.timerSetting}s Cars Logo Quiz (${stats.difficultySetting.toUpperCase()} mode)! Can you beat my record?`,
+        title: `${gameCategoryTitle} Score`,
+        text: `🏁 I scored ${stats.score} PTS in the ${stats.timerSetting}s ${gameCategoryTitle} (${stats.difficultySetting.toUpperCase()} mode)! Can you beat my record?`,
         url: window.location.href,
       }).catch(() => {});
     } else {
       navigator.clipboard.writeText(
-        `🏎️ I scored ${stats.score} PTS in the ${stats.timerSetting}s Cars Logo Quiz (${stats.difficultySetting.toUpperCase()} mode)!`
+        `🏁 I scored ${stats.score} PTS in the ${stats.timerSetting}s ${gameCategoryTitle} (${stats.difficultySetting.toUpperCase()} mode)!`
       );
       alert('Score copied to clipboard!');
     }
@@ -51,7 +53,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
         ) : (
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium mb-3">
             <Award className="w-3.5 h-3.5 text-cyan-400" />
-            <span>TIME'S UP! ROUND COMPLETE</span>
+            <span>TIME'S UP! {gameCategoryTitle.toUpperCase()}</span>
           </div>
         )}
 
@@ -65,7 +67,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
         <div className="grid grid-cols-2 gap-2.5 my-4 text-left">
           <div className="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
             <div className="text-[11px] text-slate-400 font-medium">TOTAL DISPLAYED</div>
-            <div className="text-lg font-bold text-slate-100 font-mono mt-0.5">{stats.totalAnswered} Logos</div>
+            <div className="text-lg font-bold text-slate-100 font-mono mt-0.5">{stats.totalAnswered} Questions</div>
           </div>
 
           <div className="bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
@@ -93,7 +95,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
               <span>AVG SPEED</span>
             </div>
             <div className="text-lg font-bold text-cyan-300 font-mono mt-0.5">
-              {stats.avgSpeedSeconds} <span className="text-xs text-slate-400 font-sans">s/logo</span>
+              {stats.avgSpeedSeconds} <span className="text-xs text-slate-400 font-sans">s/item</span>
             </div>
           </div>
         </div>

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CAR_LOGOS, type CarLogo } from '../data/carLogos';
+import { FLAG_LOGOS, type CountryFlag } from '../data/flagLogos';
 
+export type GameMode = 'cars' | 'flags';
 export type TimerSetting = 15 | 30 | 60 | 90;
 export type DifficultySetting = 'easy' | 'medium' | 'hard' | 'random';
 
@@ -15,24 +17,32 @@ export interface GameStats {
   isNewHighScore: boolean;
   timerSetting: TimerSetting;
   difficultySetting: DifficultySetting;
+  gameMode: GameMode;
 }
 
 export interface QuestionItem {
-  logo: CarLogo;
+  logo: CarLogo | CountryFlag;
   options: string[];
+  capitalHint?: string;
 }
 
 export type FeedbackState = 'none' | 'correct' | 'wrong';
 
 const CORRECT_DELAY_MS = 250;
-const WRONG_DELAY_MS = 1000; // 1.0s delay on wrong answer so user can review the correct choice
+const WRONG_DELAY_MS = 1000;
 
 export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => void, onPlayGameOver?: () => void) {
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>('idle');
+  const [gameMode, setGameMode] = useState<GameMode>(() => {
+    const saved = localStorage.getItem('cars_quiz_gamemode');
+    return (saved as GameMode) || 'cars';
+  });
+
   const [timerSetting, setTimerSetting] = useState<TimerSetting>(() => {
     const saved = localStorage.getItem('cars_quiz_timer');
     return saved ? (parseInt(saved, 10) as TimerSetting) : 30;
   });
+
   const [difficultySetting, setDifficultySetting] = useState<DifficultySetting>(() => {
     const saved = localStorage.getItem('cars_quiz_difficulty');
     return (saved as DifficultySetting) || 'random';
@@ -47,7 +57,8 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const [highScore, setHighScore] = useState<number>(() => {
-    const saved = localStorage.getItem('cars_quiz_highscore');
+    const key = `quiz_highscore_${gameMode}`;
+    const saved = localStorage.getItem(key);
     return saved ? parseInt(saved, 10) : 0;
   });
 
@@ -58,7 +69,15 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   const patternStepRef = useRef<number>(0);
   const usedLogoIdsRef = useRef<Set<number>>(new Set());
 
-  // Save settings helpers
+  // Update Game Mode helper
+  const updateGameMode = useCallback((mode: GameMode) => {
+    setGameMode(mode);
+    localStorage.setItem('cars_quiz_gamemode', mode);
+    const key = `quiz_highscore_${mode}`;
+    const saved = localStorage.getItem(key);
+    setHighScore(saved ? parseInt(saved, 10) : 0);
+  }, []);
+
   const updateTimerSetting = useCallback((t: TimerSetting) => {
     setTimerSetting(t);
     localStorage.setItem('cars_quiz_timer', t.toString());
@@ -69,61 +88,65 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     localStorage.setItem('cars_quiz_difficulty', d);
   }, []);
 
-  // Pick candidate logo pool based on difficulty setting and step
+  // Pick candidate dataset (CAR_LOGOS vs FLAG_LOGOS)
+  const getActiveDataset = useCallback((): (CarLogo | CountryFlag)[] => {
+    return gameMode === 'flags' ? FLAG_LOGOS : CAR_LOGOS;
+  }, [gameMode]);
+
+  // Candidate logo pool based on difficulty setting
   const getCandidatePool = useCallback(
-    (step: number, currentCorrect: number, startTime: number): CarLogo[] => {
+    (step: number, currentCorrect: number, startTime: number): (CarLogo | CountryFlag)[] => {
+      const dataset = getActiveDataset();
+      const total = dataset.length;
+
       if (difficultySetting === 'hard') {
-        // Hard Pattern: 1 from 0..49, 2 from 100+, 1 from 50..99, 2 from 100+ (loop mod 6)
         const mode = step % 6;
         if (mode === 0) {
-          return CAR_LOGOS.slice(0, 50);
+          return dataset.slice(0, Math.min(50, total));
         } else if (mode === 1 || mode === 2 || mode === 4 || mode === 5) {
-          return CAR_LOGOS.slice(100);
+          return dataset.slice(Math.min(100, total));
         } else {
-          return CAR_LOGOS.slice(50, 100);
+          return dataset.slice(Math.min(50, total), Math.min(100, total));
         }
       } else if (difficultySetting === 'medium') {
-        // Medium Pattern: Q2 (50-99) -> Q3 (100-149) -> Q1 (0-49) -> Q4 (150-199) (loop mod 4)
         const mode = step % 4;
-        if (mode === 0) {
-          return CAR_LOGOS.slice(50, 100);
-        } else if (mode === 1) {
-          return CAR_LOGOS.slice(100, 150);
-        } else if (mode === 2) {
-          return CAR_LOGOS.slice(0, 50);
-        } else {
-          return CAR_LOGOS.slice(150, 200);
-        }
+        const q1 = Math.floor(total * 0.25);
+        const q2 = Math.floor(total * 0.50);
+        const q3 = Math.floor(total * 0.75);
+
+        if (mode === 0) return dataset.slice(q1, q2);
+        if (mode === 1) return dataset.slice(q2, q3);
+        if (mode === 2) return dataset.slice(0, q1);
+        return dataset.slice(q3);
       } else if (difficultySetting === 'easy') {
-        // Easy: 0..64 unless 8+ correct within 10 seconds from round start -> 65..99
         const elapsedSec = (Date.now() - startTime) / 1000;
         if (currentCorrect >= 8 && elapsedSec <= 10) {
-          return CAR_LOGOS.slice(65, 100);
+          return dataset.slice(Math.min(65, total), Math.min(100, total));
         }
-        return CAR_LOGOS.slice(0, 65);
+        return dataset.slice(0, Math.min(65, total));
       }
 
-      // Default / Random: all logos
-      return CAR_LOGOS;
+      return dataset;
     },
-    [difficultySetting]
+    [difficultySetting, getActiveDataset]
   );
 
-  // Generate 4 options (1 correct, 3 distractors)
+  // Generate question
   const generateQuestion = useCallback(
     (step: number, currentCorrect: number, startTime: number): QuestionItem => {
+      const fullDataset = getActiveDataset();
       let pool = getCandidatePool(step, currentCorrect, startTime);
       let unusedPool = pool.filter((logo) => !usedLogoIdsRef.current.has(logo.id));
 
       if (unusedPool.length < 1) {
-        unusedPool = pool.length > 0 ? pool : [...CAR_LOGOS];
+        unusedPool = pool.length > 0 ? pool : [...fullDataset];
       }
 
       const targetLogo = unusedPool[Math.floor(Math.random() * unusedPool.length)];
       usedLogoIdsRef.current.add(targetLogo.id);
 
       const distractors: string[] = [];
-      const optionPool = CAR_LOGOS.filter((l) => l.brand !== targetLogo.brand);
+      const optionPool = fullDataset.filter((l) => l.brand !== targetLogo.brand);
 
       while (distractors.length < 3 && optionPool.length > 0) {
         const randomIndex = Math.floor(Math.random() * optionPool.length);
@@ -134,13 +157,15 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       }
 
       const options = [targetLogo.brand, ...distractors].sort(() => Math.random() - 0.5);
+      const capitalHint = 'capital' in targetLogo ? (targetLogo as CountryFlag).capital : undefined;
 
       return {
         logo: targetLogo,
         options,
+        capitalHint,
       };
     },
-    [getCandidatePool]
+    [getCandidatePool, getActiveDataset]
   );
 
   const endGame = useCallback(() => {
@@ -161,11 +186,12 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
           const accuracyPercentage = totalAnswered > 0 ? Math.round((finalCorrect / totalAnswered) * 100) : 0;
 
           let isNewHighScore = false;
-          let currentHigh = parseInt(localStorage.getItem('cars_quiz_highscore') || '0', 10);
+          const key = `quiz_highscore_${gameMode}`;
+          let currentHigh = parseInt(localStorage.getItem(key) || '0', 10);
 
           if (finalScore > currentHigh) {
             currentHigh = finalScore;
-            localStorage.setItem('cars_quiz_highscore', finalScore.toString());
+            localStorage.setItem(key, finalScore.toString());
             setHighScore(finalScore);
             isNewHighScore = true;
           }
@@ -181,6 +207,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
             isNewHighScore,
             timerSetting,
             difficultySetting,
+            gameMode,
           });
 
           return finalScore;
@@ -189,7 +216,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       });
       return finalCorrect;
     });
-  }, [onPlayGameOver, timerSetting, difficultySetting]);
+  }, [onPlayGameOver, timerSetting, difficultySetting, gameMode]);
 
   const startGame = useCallback(() => {
     usedLogoIdsRef.current.clear();
@@ -280,6 +307,8 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
   return {
     gameState,
+    gameMode,
+    updateGameMode,
     timeLeft,
     timerSetting,
     difficultySetting,

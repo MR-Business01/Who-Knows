@@ -1,0 +1,1352 @@
+[
+  {
+    "id": 1,
+    "brand": "Egypt",
+    "slug": "egypt",
+    "capital": "Cairo",
+    "image_filename": "egypt.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/egypt.png",
+    "popularity_rank": 1
+  },
+  {
+    "id": 2,
+    "brand": "United States",
+    "slug": "united-states",
+    "capital": "Washington, D.C.",
+    "image_filename": "united-states.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/united-states.png",
+    "popularity_rank": 2
+  },
+  {
+    "id": 3,
+    "brand": "United Kingdom",
+    "slug": "united-kingdom",
+    "capital": "London",
+    "image_filename": "united-kingdom.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/united-kingdom.png",
+    "popularity_rank": 3
+  },
+  {
+    "id": 4,
+    "brand": "France",
+    "slug": "france",
+    "capital": "Paris",
+    "image_filename": "france.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/france.png",
+    "popularity_rank": 4
+  },
+  {
+    "id": 5,
+    "brand": "Germany",
+    "slug": "germany",
+    "capital": "Berlin",
+    "image_filename": "germany.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/germany.png",
+    "popularity_rank": 5
+  },
+  {
+    "id": 6,
+    "brand": "Italy",
+    "slug": "italy",
+    "capital": "Rome",
+    "image_filename": "italy.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/italy.png",
+    "popularity_rank": 6
+  },
+  {
+    "id": 7,
+    "brand": "Japan",
+    "slug": "japan",
+    "capital": "Tokyo",
+    "image_filename": "japan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/japan.png",
+    "popularity_rank": 7
+  },
+  {
+    "id": 8,
+    "brand": "Brazil",
+    "slug": "brazil",
+    "capital": "Bras\u00edlia",
+    "image_filename": "brazil.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/brazil.png",
+    "popularity_rank": 8
+  },
+  {
+    "id": 9,
+    "brand": "Canada",
+    "slug": "canada",
+    "capital": "Ottawa",
+    "image_filename": "canada.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/canada.png",
+    "popularity_rank": 9
+  },
+  {
+    "id": 10,
+    "brand": "Spain",
+    "slug": "spain",
+    "capital": "Madrid",
+    "image_filename": "spain.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/spain.png",
+    "popularity_rank": 10
+  },
+  {
+    "id": 11,
+    "brand": "Argentina",
+    "slug": "argentina",
+    "capital": "Buenos Aires",
+    "image_filename": "argentina.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/argentina.png",
+    "popularity_rank": 11
+  },
+  {
+    "id": 12,
+    "brand": "Australia",
+    "slug": "australia",
+    "capital": "Canberra",
+    "image_filename": "australia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/australia.png",
+    "popularity_rank": 12
+  },
+  {
+    "id": 13,
+    "brand": "China",
+    "slug": "china",
+    "capital": "Beijing",
+    "image_filename": "china.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/china.png",
+    "popularity_rank": 13
+  },
+  {
+    "id": 14,
+    "brand": "India",
+    "slug": "india",
+    "capital": "New Delhi",
+    "image_filename": "india.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/india.png",
+    "popularity_rank": 14
+  },
+  {
+    "id": 15,
+    "brand": "Mexico",
+    "slug": "mexico",
+    "capital": "Mexico City",
+    "image_filename": "mexico.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/mexico.png",
+    "popularity_rank": 15
+  },
+  {
+    "id": 16,
+    "brand": "Saudi Arabia",
+    "slug": "saudi-arabia",
+    "capital": "Riyadh",
+    "image_filename": "saudi-arabia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/saudi-arabia.png",
+    "popularity_rank": 16
+  },
+  {
+    "id": 17,
+    "brand": "United Arab Emirates",
+    "slug": "united-arab-emirates",
+    "capital": "Abu Dhabi",
+    "image_filename": "united-arab-emirates.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/united-arab-emirates.png",
+    "popularity_rank": 17
+  },
+  {
+    "id": 18,
+    "brand": "South Korea",
+    "slug": "south-korea",
+    "capital": "Seoul",
+    "image_filename": "south-korea.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/south-korea.png",
+    "popularity_rank": 18
+  },
+  {
+    "id": 19,
+    "brand": "Turkey",
+    "slug": "turkey",
+    "capital": "Ankara",
+    "image_filename": "turkey.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/turkey.png",
+    "popularity_rank": 19
+  },
+  {
+    "id": 20,
+    "brand": "Russia",
+    "slug": "russia",
+    "capital": "Moscow",
+    "image_filename": "russia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/russia.png",
+    "popularity_rank": 20
+  },
+  {
+    "id": 21,
+    "brand": "Netherlands",
+    "slug": "netherlands",
+    "capital": "Amsterdam",
+    "image_filename": "netherlands.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/netherlands.png",
+    "popularity_rank": 21
+  },
+  {
+    "id": 22,
+    "brand": "Switzerland",
+    "slug": "switzerland",
+    "capital": "Bern",
+    "image_filename": "switzerland.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/switzerland.png",
+    "popularity_rank": 22
+  },
+  {
+    "id": 23,
+    "brand": "Sweden",
+    "slug": "sweden",
+    "capital": "Stockholm",
+    "image_filename": "sweden.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/sweden.png",
+    "popularity_rank": 23
+  },
+  {
+    "id": 24,
+    "brand": "Norway",
+    "slug": "norway",
+    "capital": "Oslo",
+    "image_filename": "norway.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/norway.png",
+    "popularity_rank": 24
+  },
+  {
+    "id": 25,
+    "brand": "Greece",
+    "slug": "greece",
+    "capital": "Athens",
+    "image_filename": "greece.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/greece.png",
+    "popularity_rank": 25
+  },
+  {
+    "id": 26,
+    "brand": "Portugal",
+    "slug": "portugal",
+    "capital": "Lisbon",
+    "image_filename": "portugal.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/portugal.png",
+    "popularity_rank": 26
+  },
+  {
+    "id": 27,
+    "brand": "Belgium",
+    "slug": "belgium",
+    "capital": "Brussels",
+    "image_filename": "belgium.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/belgium.png",
+    "popularity_rank": 27
+  },
+  {
+    "id": 28,
+    "brand": "South Africa",
+    "slug": "south-africa",
+    "capital": "Pretoria",
+    "image_filename": "south-africa.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/south-africa.png",
+    "popularity_rank": 28
+  },
+  {
+    "id": 29,
+    "brand": "Morocco",
+    "slug": "morocco",
+    "capital": "Rabat",
+    "image_filename": "morocco.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/morocco.png",
+    "popularity_rank": 29
+  },
+  {
+    "id": 30,
+    "brand": "Nigeria",
+    "slug": "nigeria",
+    "capital": "Abuja",
+    "image_filename": "nigeria.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/nigeria.png",
+    "popularity_rank": 30
+  },
+  {
+    "id": 31,
+    "brand": "Indonesia",
+    "slug": "indonesia",
+    "capital": "Jakarta",
+    "image_filename": "indonesia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/indonesia.png",
+    "popularity_rank": 31
+  },
+  {
+    "id": 32,
+    "brand": "Thailand",
+    "slug": "thailand",
+    "capital": "Bangkok",
+    "image_filename": "thailand.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/thailand.png",
+    "popularity_rank": 32
+  },
+  {
+    "id": 33,
+    "brand": "Vietnam",
+    "slug": "vietnam",
+    "capital": "Hanoi",
+    "image_filename": "vietnam.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/vietnam.png",
+    "popularity_rank": 33
+  },
+  {
+    "id": 34,
+    "brand": "Poland",
+    "slug": "poland",
+    "capital": "Warsaw",
+    "image_filename": "poland.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/poland.png",
+    "popularity_rank": 34
+  },
+  {
+    "id": 35,
+    "brand": "Ukraine",
+    "slug": "ukraine",
+    "capital": "Kyiv",
+    "image_filename": "ukraine.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/ukraine.png",
+    "popularity_rank": 35
+  },
+  {
+    "id": 36,
+    "brand": "Colombia",
+    "slug": "colombia",
+    "capital": "Bogot\u00e1",
+    "image_filename": "colombia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/colombia.png",
+    "popularity_rank": 36
+  },
+  {
+    "id": 37,
+    "brand": "Chile",
+    "slug": "chile",
+    "capital": "Santiago",
+    "image_filename": "chile.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/chile.png",
+    "popularity_rank": 37
+  },
+  {
+    "id": 38,
+    "brand": "Peru",
+    "slug": "peru",
+    "capital": "Lima",
+    "image_filename": "peru.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/peru.png",
+    "popularity_rank": 38
+  },
+  {
+    "id": 39,
+    "brand": "Ireland",
+    "slug": "ireland",
+    "capital": "Dublin",
+    "image_filename": "ireland.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/ireland.png",
+    "popularity_rank": 39
+  },
+  {
+    "id": 40,
+    "brand": "Austria",
+    "slug": "austria",
+    "capital": "Vienna",
+    "image_filename": "austria.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/austria.png",
+    "popularity_rank": 40
+  },
+  {
+    "id": 41,
+    "brand": "Denmark",
+    "slug": "denmark",
+    "capital": "Copenhagen",
+    "image_filename": "denmark.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/denmark.png",
+    "popularity_rank": 41
+  },
+  {
+    "id": 42,
+    "brand": "Finland",
+    "slug": "finland",
+    "capital": "Helsinki",
+    "image_filename": "finland.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/finland.png",
+    "popularity_rank": 42
+  },
+  {
+    "id": 43,
+    "brand": "Czech Republic",
+    "slug": "czech-republic",
+    "capital": "Prague",
+    "image_filename": "czech-republic.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/czech-republic.png",
+    "popularity_rank": 43
+  },
+  {
+    "id": 44,
+    "brand": "Hungary",
+    "slug": "hungary",
+    "capital": "Budapest",
+    "image_filename": "hungary.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/hungary.png",
+    "popularity_rank": 44
+  },
+  {
+    "id": 45,
+    "brand": "Croatia",
+    "slug": "croatia",
+    "capital": "Zagreb",
+    "image_filename": "croatia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/croatia.png",
+    "popularity_rank": 45
+  },
+  {
+    "id": 46,
+    "brand": "Algeria",
+    "slug": "algeria",
+    "capital": "Algiers",
+    "image_filename": "algeria.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/algeria.png",
+    "popularity_rank": 46
+  },
+  {
+    "id": 47,
+    "brand": "Tunisia",
+    "slug": "tunisia",
+    "capital": "Tunis",
+    "image_filename": "tunisia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/tunisia.png",
+    "popularity_rank": 47
+  },
+  {
+    "id": 48,
+    "brand": "Qatar",
+    "slug": "qatar",
+    "capital": "Doha",
+    "image_filename": "qatar.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/qatar.png",
+    "popularity_rank": 48
+  },
+  {
+    "id": 49,
+    "brand": "Kuwait",
+    "slug": "kuwait",
+    "capital": "Kuwait City",
+    "image_filename": "kuwait.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/kuwait.png",
+    "popularity_rank": 49
+  },
+  {
+    "id": 50,
+    "brand": "Singapore",
+    "slug": "singapore",
+    "capital": "Singapore",
+    "image_filename": "singapore.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/singapore.png",
+    "popularity_rank": 50
+  },
+  {
+    "id": 51,
+    "brand": "Malaysia",
+    "slug": "malaysia",
+    "capital": "Kuala Lumpur",
+    "image_filename": "malaysia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/malaysia.png",
+    "popularity_rank": 51
+  },
+  {
+    "id": 52,
+    "brand": "Philippines",
+    "slug": "philippines",
+    "capital": "Manila",
+    "image_filename": "philippines.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/philippines.png",
+    "popularity_rank": 52
+  },
+  {
+    "id": 53,
+    "brand": "Pakistan",
+    "slug": "pakistan",
+    "capital": "Islamabad",
+    "image_filename": "pakistan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/pakistan.png",
+    "popularity_rank": 53
+  },
+  {
+    "id": 54,
+    "brand": "Bangladesh",
+    "slug": "bangladesh",
+    "capital": "Dhaka",
+    "image_filename": "bangladesh.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/bangladesh.png",
+    "popularity_rank": 54
+  },
+  {
+    "id": 55,
+    "brand": "New Zealand",
+    "slug": "new-zealand",
+    "capital": "Wellington",
+    "image_filename": "new-zealand.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/new-zealand.png",
+    "popularity_rank": 55
+  },
+  {
+    "id": 56,
+    "brand": "Iceland",
+    "slug": "iceland",
+    "capital": "Reykjav\u00edk",
+    "image_filename": "iceland.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/iceland.png",
+    "popularity_rank": 56
+  },
+  {
+    "id": 57,
+    "brand": "Uruguay",
+    "slug": "uruguay",
+    "capital": "Montevideo",
+    "image_filename": "uruguay.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/uruguay.png",
+    "popularity_rank": 57
+  },
+  {
+    "id": 58,
+    "brand": "Paraguay",
+    "slug": "paraguay",
+    "capital": "Asunci\u00f3n",
+    "image_filename": "paraguay.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/paraguay.png",
+    "popularity_rank": 58
+  },
+  {
+    "id": 59,
+    "brand": "Bolivia",
+    "slug": "bolivia",
+    "capital": "Sucre",
+    "image_filename": "bolivia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/bolivia.png",
+    "popularity_rank": 59
+  },
+  {
+    "id": 60,
+    "brand": "Ecuador",
+    "slug": "ecuador",
+    "capital": "Quito",
+    "image_filename": "ecuador.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/ecuador.png",
+    "popularity_rank": 60
+  },
+  {
+    "id": 61,
+    "brand": "Venezuela",
+    "slug": "venezuela",
+    "capital": "Caracas",
+    "image_filename": "venezuela.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/venezuela.png",
+    "popularity_rank": 61
+  },
+  {
+    "id": 62,
+    "brand": "Cuba",
+    "slug": "cuba",
+    "capital": "Havana",
+    "image_filename": "cuba.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/cuba.png",
+    "popularity_rank": 62
+  },
+  {
+    "id": 63,
+    "brand": "Jamaica",
+    "slug": "jamaica",
+    "capital": "Kingston",
+    "image_filename": "jamaica.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/jamaica.png",
+    "popularity_rank": 63
+  },
+  {
+    "id": 64,
+    "brand": "Costa Rica",
+    "slug": "costa-rica",
+    "capital": "San Jos\u00e9",
+    "image_filename": "costa-rica.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/costa-rica.png",
+    "popularity_rank": 64
+  },
+  {
+    "id": 65,
+    "brand": "Panama",
+    "slug": "panama",
+    "capital": "Panama City",
+    "image_filename": "panama.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/panama.png",
+    "popularity_rank": 65
+  },
+  {
+    "id": 66,
+    "brand": "Kenya",
+    "slug": "kenya",
+    "capital": "Nairobi",
+    "image_filename": "kenya.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/kenya.png",
+    "popularity_rank": 66
+  },
+  {
+    "id": 67,
+    "brand": "Ghana",
+    "slug": "ghana",
+    "capital": "Accra",
+    "image_filename": "ghana.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/ghana.png",
+    "popularity_rank": 67
+  },
+  {
+    "id": 68,
+    "brand": "Senegal",
+    "slug": "senegal",
+    "capital": "Dakar",
+    "image_filename": "senegal.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/senegal.png",
+    "popularity_rank": 68
+  },
+  {
+    "id": 69,
+    "brand": "Cameroon",
+    "slug": "cameroon",
+    "capital": "Yaound\u00e9",
+    "image_filename": "cameroon.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/cameroon.png",
+    "popularity_rank": 69
+  },
+  {
+    "id": 70,
+    "brand": "Ivory Coast",
+    "slug": "ivory-coast",
+    "capital": "Yamoussoukro",
+    "image_filename": "ivory-coast.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/ivory-coast.png",
+    "popularity_rank": 70
+  },
+  {
+    "id": 71,
+    "brand": "Oman",
+    "slug": "oman",
+    "capital": "Muscat",
+    "image_filename": "oman.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/oman.png",
+    "popularity_rank": 71
+  },
+  {
+    "id": 72,
+    "brand": "Jordan",
+    "slug": "jordan",
+    "capital": "Amman",
+    "image_filename": "jordan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/jordan.png",
+    "popularity_rank": 72
+  },
+  {
+    "id": 73,
+    "brand": "Lebanon",
+    "slug": "lebanon",
+    "capital": "Beirut",
+    "image_filename": "lebanon.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/lebanon.png",
+    "popularity_rank": 73
+  },
+  {
+    "id": 74,
+    "brand": "Iraq",
+    "slug": "iraq",
+    "capital": "Baghdad",
+    "image_filename": "iraq.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/iraq.png",
+    "popularity_rank": 74
+  },
+  {
+    "id": 75,
+    "brand": "Syria",
+    "slug": "syria",
+    "capital": "Damascus",
+    "image_filename": "syria.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/syria.png",
+    "popularity_rank": 75
+  },
+  {
+    "id": 76,
+    "brand": "Serbia",
+    "slug": "serbia",
+    "capital": "Belgrade",
+    "image_filename": "serbia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/serbia.png",
+    "popularity_rank": 76
+  },
+  {
+    "id": 77,
+    "brand": "Slovakia",
+    "slug": "slovakia",
+    "capital": "Bratislava",
+    "image_filename": "slovakia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/slovakia.png",
+    "popularity_rank": 77
+  },
+  {
+    "id": 78,
+    "brand": "Slovenia",
+    "slug": "slovenia",
+    "capital": "Ljubljana",
+    "image_filename": "slovenia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/slovenia.png",
+    "popularity_rank": 78
+  },
+  {
+    "id": 79,
+    "brand": "Romania",
+    "slug": "romania",
+    "capital": "Bucharest",
+    "image_filename": "romania.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/romania.png",
+    "popularity_rank": 79
+  },
+  {
+    "id": 80,
+    "brand": "Bulgaria",
+    "slug": "bulgaria",
+    "capital": "Sofia",
+    "image_filename": "bulgaria.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/bulgaria.png",
+    "popularity_rank": 80
+  },
+  {
+    "id": 81,
+    "brand": "Lithuania",
+    "slug": "lithuania",
+    "capital": "Vilnius",
+    "image_filename": "lithuania.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/lithuania.png",
+    "popularity_rank": 81
+  },
+  {
+    "id": 82,
+    "brand": "Latvia",
+    "slug": "latvia",
+    "capital": "Riga",
+    "image_filename": "latvia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/latvia.png",
+    "popularity_rank": 82
+  },
+  {
+    "id": 83,
+    "brand": "Estonia",
+    "slug": "estonia",
+    "capital": "Tallinn",
+    "image_filename": "estonia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/estonia.png",
+    "popularity_rank": 83
+  },
+  {
+    "id": 84,
+    "brand": "Belarus",
+    "slug": "belarus",
+    "capital": "Minsk",
+    "image_filename": "belarus.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/belarus.png",
+    "popularity_rank": 84
+  },
+  {
+    "id": 85,
+    "brand": "Kazakhstan",
+    "slug": "kazakhstan",
+    "capital": "Astana",
+    "image_filename": "kazakhstan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/kazakhstan.png",
+    "popularity_rank": 85
+  },
+  {
+    "id": 86,
+    "brand": "Uzbekistan",
+    "slug": "uzbekistan",
+    "capital": "Tashkent",
+    "image_filename": "uzbekistan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/uzbekistan.png",
+    "popularity_rank": 86
+  },
+  {
+    "id": 87,
+    "brand": "Azerbaijan",
+    "slug": "azerbaijan",
+    "capital": "Baku",
+    "image_filename": "azerbaijan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/azerbaijan.png",
+    "popularity_rank": 87
+  },
+  {
+    "id": 88,
+    "brand": "Georgia",
+    "slug": "georgia",
+    "capital": "Tbilisi",
+    "image_filename": "georgia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/georgia.png",
+    "popularity_rank": 88
+  },
+  {
+    "id": 89,
+    "brand": "Armenia",
+    "slug": "armenia",
+    "capital": "Yerevan",
+    "image_filename": "armenia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/armenia.png",
+    "popularity_rank": 89
+  },
+  {
+    "id": 90,
+    "brand": "Cyprus",
+    "slug": "cyprus",
+    "capital": "Nicosia",
+    "image_filename": "cyprus.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/cyprus.png",
+    "popularity_rank": 90
+  },
+  {
+    "id": 91,
+    "brand": "Malta",
+    "slug": "malta",
+    "capital": "Valletta",
+    "image_filename": "malta.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/malta.png",
+    "popularity_rank": 91
+  },
+  {
+    "id": 92,
+    "brand": "Luxembourg",
+    "slug": "luxembourg",
+    "capital": "Luxembourg",
+    "image_filename": "luxembourg.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/luxembourg.png",
+    "popularity_rank": 92
+  },
+  {
+    "id": 93,
+    "brand": "Monaco",
+    "slug": "monaco",
+    "capital": "Monaco",
+    "image_filename": "monaco.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/monaco.png",
+    "popularity_rank": 93
+  },
+  {
+    "id": 94,
+    "brand": "Liechtenstein",
+    "slug": "liechtenstein",
+    "capital": "Vaduz",
+    "image_filename": "liechtenstein.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/liechtenstein.png",
+    "popularity_rank": 94
+  },
+  {
+    "id": 95,
+    "brand": "San Marino",
+    "slug": "san-marino",
+    "capital": "San Marino",
+    "image_filename": "san-marino.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/san-marino.png",
+    "popularity_rank": 95
+  },
+  {
+    "id": 96,
+    "brand": "Nepal",
+    "slug": "nepal",
+    "capital": "Kathmandu",
+    "image_filename": "nepal.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/nepal.png",
+    "popularity_rank": 96
+  },
+  {
+    "id": 97,
+    "brand": "Sri Lanka",
+    "slug": "sri-lanka",
+    "capital": "Sri Jayawardenepura Kotte",
+    "image_filename": "sri-lanka.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/sri-lanka.png",
+    "popularity_rank": 97
+  },
+  {
+    "id": 98,
+    "brand": "Myanmar",
+    "slug": "myanmar",
+    "capital": "Naypyidaw",
+    "image_filename": "myanmar.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/myanmar.png",
+    "popularity_rank": 98
+  },
+  {
+    "id": 99,
+    "brand": "Cambodia",
+    "slug": "cambodia",
+    "capital": "Phnom Penh",
+    "image_filename": "cambodia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/cambodia.png",
+    "popularity_rank": 99
+  },
+  {
+    "id": 100,
+    "brand": "Laos",
+    "slug": "laos",
+    "capital": "Vientiane",
+    "image_filename": "laos.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/laos.png",
+    "popularity_rank": 100
+  },
+  {
+    "id": 101,
+    "brand": "Mongolia",
+    "slug": "mongolia",
+    "capital": "Ulaanbaatar",
+    "image_filename": "mongolia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/mongolia.png",
+    "popularity_rank": 101
+  },
+  {
+    "id": 102,
+    "brand": "North Korea",
+    "slug": "north-korea",
+    "capital": "Pyongyang",
+    "image_filename": "north-korea.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/north-korea.png",
+    "popularity_rank": 102
+  },
+  {
+    "id": 103,
+    "brand": "Sudan",
+    "slug": "sudan",
+    "capital": "Khartoum",
+    "image_filename": "sudan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/sudan.png",
+    "popularity_rank": 103
+  },
+  {
+    "id": 104,
+    "brand": "Ethiopia",
+    "slug": "ethiopia",
+    "capital": "Addis Ababa",
+    "image_filename": "ethiopia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/ethiopia.png",
+    "popularity_rank": 104
+  },
+  {
+    "id": 105,
+    "brand": "Uganda",
+    "slug": "uganda",
+    "capital": "Kampala",
+    "image_filename": "uganda.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/uganda.png",
+    "popularity_rank": 105
+  },
+  {
+    "id": 106,
+    "brand": "Tanzania",
+    "slug": "tanzania",
+    "capital": "Dodoma",
+    "image_filename": "tanzania.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/tanzania.png",
+    "popularity_rank": 106
+  },
+  {
+    "id": 107,
+    "brand": "Angola",
+    "slug": "angola",
+    "capital": "Luanda",
+    "image_filename": "angola.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/angola.png",
+    "popularity_rank": 107
+  },
+  {
+    "id": 108,
+    "brand": "Zambia",
+    "slug": "zambia",
+    "capital": "Lusaka",
+    "image_filename": "zambia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/zambia.png",
+    "popularity_rank": 108
+  },
+  {
+    "id": 109,
+    "brand": "Zimbabwe",
+    "slug": "zimbabwe",
+    "capital": "Harare",
+    "image_filename": "zimbabwe.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/zimbabwe.png",
+    "popularity_rank": 109
+  },
+  {
+    "id": 110,
+    "brand": "Mozambique",
+    "slug": "mozambique",
+    "capital": "Maputo",
+    "image_filename": "mozambique.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/mozambique.png",
+    "popularity_rank": 110
+  },
+  {
+    "id": 111,
+    "brand": "Madagascar",
+    "slug": "madagascar",
+    "capital": "Antananarivo",
+    "image_filename": "madagascar.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/madagascar.png",
+    "popularity_rank": 111
+  },
+  {
+    "id": 112,
+    "brand": "Dominican Republic",
+    "slug": "dominican-republic",
+    "capital": "Santo Domingo",
+    "image_filename": "dominican-republic.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/dominican-republic.png",
+    "popularity_rank": 112
+  },
+  {
+    "id": 113,
+    "brand": "Haiti",
+    "slug": "haiti",
+    "capital": "Port-au-Prince",
+    "image_filename": "haiti.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/haiti.png",
+    "popularity_rank": 113
+  },
+  {
+    "id": 114,
+    "brand": "Guatemala",
+    "slug": "guatemala",
+    "capital": "Guatemala City",
+    "image_filename": "guatemala.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/guatemala.png",
+    "popularity_rank": 114
+  },
+  {
+    "id": 115,
+    "brand": "Honduras",
+    "slug": "honduras",
+    "capital": "Tegucigalpa",
+    "image_filename": "honduras.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/honduras.png",
+    "popularity_rank": 115
+  },
+  {
+    "id": 116,
+    "brand": "El Salvador",
+    "slug": "el-salvador",
+    "capital": "San Salvador",
+    "image_filename": "el-salvador.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/el-salvador.png",
+    "popularity_rank": 116
+  },
+  {
+    "id": 117,
+    "brand": "Nicaragua",
+    "slug": "nicaragua",
+    "capital": "Managua",
+    "image_filename": "nicaragua.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/nicaragua.png",
+    "popularity_rank": 117
+  },
+  {
+    "id": 118,
+    "brand": "Bahamas",
+    "slug": "bahamas",
+    "capital": "Nassau",
+    "image_filename": "bahamas.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/bahamas.png",
+    "popularity_rank": 118
+  },
+  {
+    "id": 119,
+    "brand": "Barbados",
+    "slug": "barbados",
+    "capital": "Bridgetown",
+    "image_filename": "barbados.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/barbados.png",
+    "popularity_rank": 119
+  },
+  {
+    "id": 120,
+    "brand": "Trinidad and Tobago",
+    "slug": "trinidad-and-tobago",
+    "capital": "Port of Spain",
+    "image_filename": "trinidad-and-tobago.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/trinidad-and-tobago.png",
+    "popularity_rank": 120
+  },
+  {
+    "id": 121,
+    "brand": "Albania",
+    "slug": "albania",
+    "capital": "Tirana",
+    "image_filename": "albania.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/albania.png",
+    "popularity_rank": 121
+  },
+  {
+    "id": 122,
+    "brand": "North Macedonia",
+    "slug": "north-macedonia",
+    "capital": "Skopje",
+    "image_filename": "north-macedonia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/north-macedonia.png",
+    "popularity_rank": 122
+  },
+  {
+    "id": 123,
+    "brand": "Bosnia and Herzegovina",
+    "slug": "bosnia-and-herzegovina",
+    "capital": "Sarajevo",
+    "image_filename": "bosnia-and-herzegovina.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/bosnia-and-herzegovina.png",
+    "popularity_rank": 123
+  },
+  {
+    "id": 124,
+    "brand": "Montenegro",
+    "slug": "montenegro",
+    "capital": "Podgorica",
+    "image_filename": "montenegro.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/montenegro.png",
+    "popularity_rank": 124
+  },
+  {
+    "id": 125,
+    "brand": "Moldova",
+    "slug": "moldova",
+    "capital": "Chisinau",
+    "image_filename": "moldova.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/moldova.png",
+    "popularity_rank": 125
+  },
+  {
+    "id": 126,
+    "brand": "Bahrain",
+    "slug": "bahrain",
+    "capital": "Manama",
+    "image_filename": "bahrain.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/bahrain.png",
+    "popularity_rank": 126
+  },
+  {
+    "id": 127,
+    "brand": "Yemen",
+    "slug": "yemen",
+    "capital": "Sanaa",
+    "image_filename": "yemen.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/yemen.png",
+    "popularity_rank": 127
+  },
+  {
+    "id": 128,
+    "brand": "Afghanistan",
+    "slug": "afghanistan",
+    "capital": "Kabul",
+    "image_filename": "afghanistan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/afghanistan.png",
+    "popularity_rank": 128
+  },
+  {
+    "id": 129,
+    "brand": "Turkmenistan",
+    "slug": "turkmenistan",
+    "capital": "Ashgabat",
+    "image_filename": "turkmenistan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/turkmenistan.png",
+    "popularity_rank": 129
+  },
+  {
+    "id": 130,
+    "brand": "Kyrgyzstan",
+    "slug": "kyrgyzstan",
+    "capital": "Bishkek",
+    "image_filename": "kyrgyzstan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/kyrgyzstan.png",
+    "popularity_rank": 130
+  },
+  {
+    "id": 131,
+    "brand": "Tajikistan",
+    "slug": "tajikistan",
+    "capital": "Dushanbe",
+    "image_filename": "tajikistan.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/tajikistan.png",
+    "popularity_rank": 131
+  },
+  {
+    "id": 132,
+    "brand": "Brunei",
+    "slug": "brunei",
+    "capital": "Bandar Seri Begawan",
+    "image_filename": "brunei.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/brunei.png",
+    "popularity_rank": 132
+  },
+  {
+    "id": 133,
+    "brand": "Maldives",
+    "slug": "maldives",
+    "capital": "Mal\u00e9",
+    "image_filename": "maldives.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/maldives.png",
+    "popularity_rank": 133
+  },
+  {
+    "id": 134,
+    "brand": "Fiji",
+    "slug": "fiji",
+    "capital": "Suva",
+    "image_filename": "fiji.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/fiji.png",
+    "popularity_rank": 134
+  },
+  {
+    "id": 135,
+    "brand": "Papua New Guinea",
+    "slug": "papua-new-guinea",
+    "capital": "Port Moresby",
+    "image_filename": "papua-new-guinea.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/papua-new-guinea.png",
+    "popularity_rank": 135
+  },
+  {
+    "id": 136,
+    "brand": "Mauritius",
+    "slug": "mauritius",
+    "capital": "Port Louis",
+    "image_filename": "mauritius.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/mauritius.png",
+    "popularity_rank": 136
+  },
+  {
+    "id": 137,
+    "brand": "Seychelles",
+    "slug": "seychelles",
+    "capital": "Victoria",
+    "image_filename": "seychelles.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/seychelles.png",
+    "popularity_rank": 137
+  },
+  {
+    "id": 138,
+    "brand": "Cape Verde",
+    "slug": "cape-verde",
+    "capital": "Praia",
+    "image_filename": "cape-verde.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/cape-verde.png",
+    "popularity_rank": 138
+  },
+  {
+    "id": 139,
+    "brand": "Mali",
+    "slug": "mali",
+    "capital": "Bamako",
+    "image_filename": "mali.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/mali.png",
+    "popularity_rank": 139
+  },
+  {
+    "id": 140,
+    "brand": "Niger",
+    "slug": "niger",
+    "capital": "Niamey",
+    "image_filename": "niger.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/niger.png",
+    "popularity_rank": 140
+  },
+  {
+    "id": 141,
+    "brand": "Chad",
+    "slug": "chad",
+    "capital": "N Djamena",
+    "image_filename": "chad.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/chad.png",
+    "popularity_rank": 141
+  },
+  {
+    "id": 142,
+    "brand": "Somalia",
+    "slug": "somalia",
+    "capital": "Mogadishu",
+    "image_filename": "somalia.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/somalia.png",
+    "popularity_rank": 142
+  },
+  {
+    "id": 143,
+    "brand": "Libya",
+    "slug": "libya",
+    "capital": "Tripoli",
+    "image_filename": "libya.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/libya.png",
+    "popularity_rank": 143
+  },
+  {
+    "id": 144,
+    "brand": "Mauritania",
+    "slug": "mauritania",
+    "capital": "Nouakchott",
+    "image_filename": "mauritania.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/mauritania.png",
+    "popularity_rank": 144
+  },
+  {
+    "id": 145,
+    "brand": "Guyana",
+    "slug": "guyana",
+    "capital": "Georgetown",
+    "image_filename": "guyana.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/guyana.png",
+    "popularity_rank": 145
+  },
+  {
+    "id": 146,
+    "brand": "Suriname",
+    "slug": "suriname",
+    "capital": "Paramaribo",
+    "image_filename": "suriname.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/suriname.png",
+    "popularity_rank": 146
+  },
+  {
+    "id": 147,
+    "brand": "Belize",
+    "slug": "belize",
+    "capital": "Belmopan",
+    "image_filename": "belize.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/belize.png",
+    "popularity_rank": 147
+  },
+  {
+    "id": 148,
+    "brand": "Andorra",
+    "slug": "andorra",
+    "capital": "Andorra la Vella",
+    "image_filename": "andorra.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/andorra.png",
+    "popularity_rank": 148
+  },
+  {
+    "id": 149,
+    "brand": "San Marino",
+    "slug": "san-marino",
+    "capital": "San Marino",
+    "image_filename": "san-marino.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/san-marino.png",
+    "popularity_rank": 149
+  },
+  {
+    "id": 150,
+    "brand": "Vatican City",
+    "slug": "vatican-city",
+    "capital": "Vatican City",
+    "image_filename": "vatican-city.png",
+    "image_url": "https://www.geoguessr.com/images/plain/seterra/game-area/vatican-city.png",
+    "popularity_rank": 150
+  }
+]
