@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import type { CarLogo } from '../data/carLogos';
 import type { CountryFlag } from '../data/flagLogos';
 import type { FeedbackState, GameMode } from '../hooks/useGameEngine';
-import { Maximize2, ShieldAlert, Landmark } from 'lucide-react';
+import { Maximize2, ShieldAlert } from 'lucide-react';
 
 interface LogoCardProps {
   logo: CarLogo | CountryFlag | null;
-  capitalHint?: string;
+  countryName?: string;
   gameMode?: GameMode;
   feedback: FeedbackState;
   onToggleFullscreen: () => void;
@@ -14,7 +14,7 @@ interface LogoCardProps {
 
 export const LogoCard: React.FC<LogoCardProps> = ({
   logo,
-  capitalHint,
+  countryName,
   gameMode = 'cars',
   feedback,
   onToggleFullscreen,
@@ -36,6 +36,16 @@ export const LogoCard: React.FC<LogoCardProps> = ({
 
   return (
     <div className="w-full max-w-md mx-auto px-4 flex-1 flex flex-col items-center justify-center min-h-[260px] max-h-[42vh] relative">
+      {/* Big Bold Country Name Header for Capitals Quiz */}
+      {gameMode === 'capitals' && countryName && (
+        <div className="mb-2 text-center">
+          <span className="text-xs uppercase tracking-widest text-slate-400 font-bold block mb-0.5">GUESS THE CAPITAL OF</span>
+          <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-200 tracking-tight font-sans drop-shadow-md">
+            {countryName.toUpperCase()}
+          </h2>
+        </div>
+      )}
+
       <div
         className={`w-full h-full rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-300 border ${borderClasses}`}
         style={{ backgroundColor: 'rgba(235, 238, 243, 0.92)', backdropFilter: 'blur(16px)' }}
@@ -56,19 +66,11 @@ export const LogoCard: React.FC<LogoCardProps> = ({
           </div>
         )}
 
-        {/* Capital Hint Pill for Flags Quiz */}
-        {gameMode === 'flags' && capitalHint && (
-          <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700 text-cyan-300 text-[11px] font-bold flex items-center gap-1 shadow-md z-10">
-            <Landmark className="w-3 h-3 text-amber-400" />
-            <span>Capital: {capitalHint}</span>
-          </div>
-        )}
-
-        {/* Logo / Flag Image */}
+        {/* Logo / Flag Image Only */}
         {logo && !hasError ? (
           <img
             src={logo.image_url}
-            alt={gameMode === 'flags' ? 'Guess this Country Flag' : 'Guess this Car Logo'}
+            alt={gameMode === 'cars' ? 'Guess Car Logo' : 'Country Flag'}
             className={`max-w-full max-h-[220px] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition-all duration-300 ${
               isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
             }`}
@@ -83,7 +85,7 @@ export const LogoCard: React.FC<LogoCardProps> = ({
           <div className="flex flex-col items-center justify-center text-center p-4">
             <ShieldAlert className="w-12 h-12 text-amber-500 mb-2 animate-bounce" />
             <p className="text-sm font-semibold text-slate-800">
-              {gameMode === 'flags' ? 'World Flag Image' : 'Car Logo Image'}
+              {gameMode === 'cars' ? 'Car Logo Image' : 'Country Flag Image'}
             </p>
             <p className="text-xs text-slate-600 mt-1 font-mono">{logo?.brand || 'Quiz Image'}</p>
           </div>

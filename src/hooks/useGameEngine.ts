@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { CAR_LOGOS, type CarLogo } from '../data/carLogos';
 import { FLAG_LOGOS, type CountryFlag } from '../data/flagLogos';
 
-export type GameMode = 'cars' | 'flags';
+export type GameMode = 'cars' | 'flags' | 'capitals';
 export type TimerSetting = 15 | 30 | 60 | 90;
 export type DifficultySetting = 'easy' | 'medium' | 'hard' | 'random';
 
@@ -22,8 +22,9 @@ export interface GameStats {
 
 export interface QuestionItem {
   logo: CarLogo | CountryFlag;
+  targetAnswer: string;
+  countryName?: string;
   options: string[];
-  capitalHint?: string;
 }
 
 export type FeedbackState = 'none' | 'correct' | 'wrong';
@@ -90,10 +91,10 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
   // Pick candidate dataset (CAR_LOGOS vs FLAG_LOGOS)
   const getActiveDataset = useCallback((): (CarLogo | CountryFlag)[] => {
-    return gameMode === 'flags' ? FLAG_LOGOS : CAR_LOGOS;
+    return gameMode === 'cars' ? CAR_LOGOS : FLAG_LOGOS;
   }, [gameMode]);
 
-  // Candidate logo pool based on difficulty setting
+  // Candidate pool based on difficulty setting
   const getCandidatePool = useCallback(
     (step: number, currentCorrect: number, startTime: number): (CarLogo | CountryFlag)[] => {
       const dataset = getActiveDataset();
@@ -145,27 +146,54 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       const targetLogo = unusedPool[Math.floor(Math.random() * unusedPool.length)];
       usedLogoIdsRef.current.add(targetLogo.id);
 
-      const distractors: string[] = [];
-      const optionPool = fullDataset.filter((l) => l.brand !== targetLogo.brand);
+      if (gameMode === 'capitals') {
+        const countryItem = targetLogo as CountryFlag;
+        const targetAnswer = countryItem.capital;
 
-      while (distractors.length < 3 && optionPool.length > 0) {
-        const randomIndex = Math.floor(Math.random() * optionPool.length);
-        const selected = optionPool.splice(randomIndex, 1)[0];
-        if (!distractors.includes(selected.brand)) {
-          distractors.push(selected.brand);
+        // Distractors are other country capitals
+        const distractors: string[] = [];
+        const optionPool = FLAG_LOGOS.filter((c) => c.capital !== targetAnswer);
+
+        while (distractors.length < 3 && optionPool.length > 0) {
+          const randomIndex = Math.floor(Math.random() * optionPool.length);
+          const selected = optionPool.splice(randomIndex, 1)[0];
+          if (!distractors.includes(selected.capital)) {
+            distractors.push(selected.capital);
+          }
         }
+
+        const options = [targetAnswer, ...distractors].sort(() => Math.random() - 0.5);
+
+        return {
+          logo: countryItem,
+          targetAnswer,
+          countryName: countryItem.brand,
+          options,
+        };
+      } else {
+        // Cars or Flags Mode
+        const targetAnswer = targetLogo.brand;
+        const distractors: string[] = [];
+        const optionPool = fullDataset.filter((l) => l.brand !== targetAnswer);
+
+        while (distractors.length < 3 && optionPool.length > 0) {
+          const randomIndex = Math.floor(Math.random() * optionPool.length);
+          const selected = optionPool.splice(randomIndex, 1)[0];
+          if (!distractors.includes(selected.brand)) {
+            distractors.push(selected.brand);
+          }
+        }
+
+        const options = [targetAnswer, ...distractors].sort(() => Math.random() - 0.5);
+
+        return {
+          logo: targetLogo,
+          targetAnswer,
+          options,
+        };
       }
-
-      const options = [targetLogo.brand, ...distractors].sort(() => Math.random() - 0.5);
-      const capitalHint = 'capital' in targetLogo ? (targetLogo as CountryFlag).capital : undefined;
-
-      return {
-        logo: targetLogo,
-        options,
-        capitalHint,
-      };
     },
-    [getCandidatePool, getActiveDataset]
+    [getCandidatePool, getActiveDataset, gameMode]
   );
 
   const endGame = useCallback(() => {
@@ -260,11 +288,11 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   }, []);
 
   const handleAnswer = useCallback(
-    (chosenBrand: string) => {
+    (chosenAnswer: string) => {
       if (gameState !== 'playing' || !currentQuestion || feedback !== 'none') return;
 
-      setSelectedOption(chosenBrand);
-      const isCorrect = chosenBrand === currentQuestion.logo.brand;
+      setSelectedOption(chosenAnswer);
+      const isCorrect = chosenAnswer === currentQuestion.targetAnswer;
 
       let nextCorrect = correctCount;
       if (isCorrect) {

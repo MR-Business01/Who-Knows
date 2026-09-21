@@ -23,7 +23,12 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
     }
   }, [stats.isNewHighScore]);
 
-  const gameCategoryTitle = stats.gameMode === 'flags' ? 'World Flags Quiz' : 'Cars Logo Quiz';
+  const gameCategoryTitle =
+    stats.gameMode === 'cars'
+      ? 'Cars Logo Quiz'
+      : stats.gameMode === 'flags'
+      ? 'World Flags Quiz'
+      : 'Country Capitals Quiz';
 
   const handleShare = () => {
     if (navigator.share) {

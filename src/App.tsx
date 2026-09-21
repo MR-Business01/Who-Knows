@@ -11,7 +11,7 @@ import { MultiplayerModal } from './components/MultiplayerModal';
 import { SettingsModal } from './components/SettingsModal';
 import { GameSelector } from './components/GameSelector';
 import { AdContainer } from './components/AdContainer';
-import { Play, Trophy, ShieldCheck, Zap, Settings, Gauge } from 'lucide-react';
+import { Play, Trophy, Settings, Gauge } from 'lucide-react';
 
 export function App() {
   const [isMultiplayerOpen, setIsMultiplayerOpen] = useState<boolean>(false);
@@ -43,9 +43,14 @@ export function App() {
     handleAnswer,
   } = useGameEngine(playCorrect, playWrong, playGameOver);
 
-  const heroIcon = gameMode === 'flags' ? '🚩' : '🏎️';
-  const gameTitle = gameMode === 'flags' ? 'WORLD FLAGS' : 'CARS LOGO';
-  const gameDesc = gameMode === 'flags' ? 'Identify world countries by their flags' : 'Test your car brand knowledge';
+  const heroIcon = gameMode === 'cars' ? '🏎️' : gameMode === 'flags' ? '🚩' : '🏛️';
+  const gameTitle = gameMode === 'cars' ? 'CARS LOGO' : gameMode === 'flags' ? 'WORLD FLAGS' : 'COUNTRY CAPITALS';
+  const gameDesc =
+    gameMode === 'cars'
+      ? 'Test your car brand knowledge'
+      : gameMode === 'flags'
+      ? 'Identify world countries by their flags'
+      : 'Guess the capital city for each country';
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-between py-4 px-2 select-none relative overflow-hidden">
@@ -139,7 +144,7 @@ export function App() {
 
             <LogoCard
               logo={currentQuestion?.logo || null}
-              capitalHint={currentQuestion?.capitalHint}
+              countryName={currentQuestion?.countryName}
               gameMode={gameMode}
               feedback={feedback}
               onToggleFullscreen={toggleFullscreen}
@@ -147,7 +152,7 @@ export function App() {
 
             <AnswerOptions
               options={currentQuestion?.options || []}
-              correctBrand={currentQuestion?.logo.brand}
+              correctBrand={currentQuestion?.targetAnswer}
               selectedOption={selectedOption}
               feedback={feedback}
               onSelectOption={handleAnswer}
@@ -155,13 +160,9 @@ export function App() {
           </div>
         )}
 
-        <footer className="w-full max-w-md mx-auto mt-3 px-4 text-center text-[11px] text-slate-500 flex items-center justify-between">
-          <span className="flex items-center gap-1 text-slate-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Mobile-First Edition
-          </span>
-          <span className="flex items-center gap-1 text-slate-400">
-            <Zap className="w-3.5 h-3.5 text-cyan-400" /> {gameMode === 'flags' ? '150 Countries' : '210 Logos'}
-          </span>
+        {/* Centered Clean Footer */}
+        <footer className="w-full max-w-md mx-auto mt-4 px-4 text-center text-xs font-medium text-slate-400">
+          Created with 🤍
         </footer>
       </div>
 

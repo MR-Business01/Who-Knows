@@ -29,16 +29,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenMultiplayer,
   onOpenSettings,
 }) => {
+  const modeIcon = gameMode === 'cars' ? '🏎️' : gameMode === 'flags' ? '🚩' : '🏛️';
+  const modeTitle = gameMode === 'cars' ? 'CARS' : gameMode === 'flags' ? 'FLAGS' : 'CAPITALS';
+
   return (
     <header className="w-full max-w-md mx-auto px-4 py-3 flex items-center justify-between glass-panel rounded-2xl border border-slate-700/50 shadow-xl mb-3">
       {/* Brand Title */}
       <div className="flex items-center gap-2">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
-          <span className="text-xl">{gameMode === 'flags' ? '🚩' : '🏎️'}</span>
+          <span className="text-xl">{modeIcon}</span>
         </div>
         <div>
           <h1 className="text-base font-black tracking-tight text-white leading-tight flex items-center gap-1.5">
-            {gameMode === 'flags' ? 'FLAGS' : 'CARS'} <span className="text-cyan-400">QUIZ</span>
+            {modeTitle} <span className="text-cyan-400">QUIZ</span>
           </h1>
           <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
             <span className="flex items-center gap-1">
