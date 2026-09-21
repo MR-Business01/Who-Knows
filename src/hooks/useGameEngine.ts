@@ -69,6 +69,14 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   const roundStartTimeRef = useRef<number>(0);
   const patternStepRef = useRef<number>(0);
   const usedLogoIdsRef = useRef<Set<number>>(new Set());
+  const isTransitioningRef = useRef<boolean>(false);
+  const gameStateRef = useRef<'idle' | 'playing' | 'ended'>('idle');
+  const correctCountRef = useRef<number>(0);
+
+  // Sync gameStateRef & correctCountRef
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
 
   // Update Game Mode helper
   const updateGameMode = useCallback((mode: GameMode) => {
@@ -203,6 +211,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     }
 
     setGameState('ended');
+    gameStateRef.current = 'ended';
     if (onPlayGameOver) onPlayGameOver();
 
     setCorrectCount((finalCorrect) => {
@@ -249,6 +258,9 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   const startGame = useCallback(() => {
     usedLogoIdsRef.current.clear();
     patternStepRef.current = 0;
+    correctCountRef.current = 0;
+    isTransitioningRef.current = false;
+
     setScore(0);
     setCorrectCount(0);
     setWrongCount(0);
@@ -256,13 +268,15 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     setFeedback('none');
     setSelectedOption(null);
     setFinalStats(null);
-    setGameState('playing');
 
     const now = Date.now();
     roundStartTimeRef.current = now;
 
     const firstQuestion = generateQuestion(0, 0, now);
     setCurrentQuestion(firstQuestion);
+
+    setGameState('playing');
+    gameStateRef.current = 'playing';
 
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
@@ -282,6 +296,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       timerRef.current = null;
     }
     setGameState('idle');
+    gameStateRef.current = 'idle';
     setFinalStats(null);
     setFeedback('none');
     setSelectedOption(null);
@@ -289,19 +304,17 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
   const handleAnswer = useCallback(
     (chosenAnswer: string) => {
-      if (gameState !== 'playing' || !currentQuestion || feedback !== 'none') return;
+      if (gameStateRef.current !== 'playing' || isTransitioningRef.current || !currentQuestion) return;
 
+      isTransitioningRef.current = true;
       setSelectedOption(chosenAnswer);
       const isCorrect = chosenAnswer === currentQuestion.targetAnswer;
 
-      let nextCorrect = correctCount;
       if (isCorrect) {
         setFeedback('correct');
         setScore((s) => s + 10);
-        setCorrectCount((c) => {
-          nextCorrect = c + 1;
-          return nextCorrect;
-        });
+        correctCountRef.current += 1;
+        setCorrectCount(correctCountRef.current);
         if (onPlayCorrect) onPlayCorrect();
       } else {
         setFeedback('wrong');
@@ -311,21 +324,20 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
       patternStepRef.current += 1;
       const nextStep = patternStepRef.current;
+      const nextCorrect = correctCountRef.current;
       const startTime = roundStartTimeRef.current;
       const delayMs = isCorrect ? CORRECT_DELAY_MS : WRONG_DELAY_MS;
 
       setTimeout(() => {
-        setFeedback('none');
-        setSelectedOption(null);
-        setGameState((currentGameState) => {
-          if (currentGameState === 'playing') {
-            setCurrentQuestion(generateQuestion(nextStep, nextCorrect, startTime));
-          }
-          return currentGameState;
-        });
+        if (gameStateRef.current === 'playing') {
+          setFeedback('none');
+          setSelectedOption(null);
+          setCurrentQuestion(generateQuestion(nextStep, nextCorrect, startTime));
+        }
+        isTransitioningRef.current = false;
       }, delayMs);
     },
-    [gameState, currentQuestion, feedback, correctCount, generateQuestion, onPlayCorrect, onPlayWrong]
+    [currentQuestion, generateQuestion, onPlayCorrect, onPlayWrong]
   );
 
   useEffect(() => {
