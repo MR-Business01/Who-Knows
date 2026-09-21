@@ -1,62 +1,213 @@
+import { db } from './firebase';
+import { ref, set, get, update, remove, onValue, off, type Unsubscribe } from 'firebase/database';
+import type { TimerSetting, DifficultySetting, GameMode } from '../hooks/useGameEngine';
+
 export interface PlayerProfile {
   id: string;
   name: string;
   avatar: string;
   score: number;
   isHost: boolean;
+  joinedAt: number;
 }
 
 export interface RoomSession {
   roomId: string;
   roomName: string;
-  players: PlayerProfile[];
   status: 'lobby' | 'playing' | 'ended';
-  maxPlayers: number;
+  maxPlayers: 2 | 4 | 6 | 8;
+  timerSetting: TimerSetting;
+  difficultySetting: DifficultySetting;
+  gameMode: GameMode;
+  hostId: string;
+  players: Record<string, PlayerProfile>;
+  createdAt: number;
 }
 
-// Service Stub ready for Socket.io or Firebase Realtime DB integration
+export const AVATAR_OPTIONS = ['🏎️', '⚡', '🚀', '🏆', '👑', '🦁', '🐯', '🎯', '🏁', '🔥', '💎', '🌟'];
+
+// Generate clean 6-character random alphanumeric room code (e.g., X7K9P2)
+export function generateRandomRoomCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+export function getStoredPlayerProfile(): { name: string; avatar: string; id: string } {
+  const name = localStorage.getItem('cars_quiz_player_name') || 'Racer ' + Math.floor(10 + Math.random() * 90);
+  const avatar = localStorage.getItem('cars_quiz_player_avatar') || AVATAR_OPTIONS[0];
+  let id = localStorage.getItem('cars_quiz_player_id');
+  if (!id) {
+    id = 'p_' + Math.random().toString(36).substring(2, 9);
+    localStorage.setItem('cars_quiz_player_id', id);
+  }
+  return { name, avatar, id };
+}
+
+export function saveStoredPlayerProfile(name: string, avatar: string): void {
+  localStorage.setItem('cars_quiz_player_name', name);
+  localStorage.setItem('cars_quiz_player_avatar', avatar);
+}
+
 class MultiplayerService {
-  private currentRoom: RoomSession | null = null;
+  private activeUnsubscribe: Unsubscribe | null = null;
 
-  public createRoom(roomName: string, hostName: string): RoomSession {
-    const roomId = 'CAR-' + Math.floor(1000 + Math.random() * 9000);
-    this.currentRoom = {
-      roomId,
-      roomName,
-      status: 'lobby',
-      maxPlayers: 8,
-      players: [
-        {
-          id: 'player_1',
-          name: hostName || 'Driver 1',
-          avatar: '🏎️',
-          score: 0,
-          isHost: true,
-        },
-      ],
-    };
-    return this.currentRoom;
-  }
-
-  public joinRoom(roomId: string, playerName: string): RoomSession | null {
-    if (!this.currentRoom || this.currentRoom.roomId !== roomId) {
-      // Mock joining a demo room
-      this.currentRoom = {
-        roomId,
-        roomName: "Friends Fast Track",
-        status: 'lobby',
-        maxPlayers: 8,
-        players: [
-          { id: 'player_host', name: 'Race Master', avatar: '🏁', score: 0, isHost: true },
-          { id: 'player_2', name: playerName || 'Guest Driver', avatar: '🚗', score: 0, isHost: false },
-        ],
-      };
+  // Real-time listener subscription
+  public subscribeToRoom(roomId: string, callback: (room: RoomSession | null) => void): () => void {
+    if (this.activeUnsubscribe) {
+      this.activeUnsubscribe();
+      this.activeUnsubscribe = null;
     }
-    return this.currentRoom;
+
+    const roomRef = ref(db, `rooms/${roomId}`);
+    const unsubscribe = onValue(
+      roomRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const rawData = snapshot.val() as RoomSession;
+          if (!rawData.players) rawData.players = {};
+          callback(rawData);
+        } else {
+          callback(null);
+        }
+      },
+      (error) => {
+        console.error('Firebase DB Subscription Error:', error);
+        callback(null);
+      }
+    );
+
+    this.activeUnsubscribe = unsubscribe;
+    return () => {
+      off(roomRef);
+      this.activeUnsubscribe = null;
+    };
   }
 
-  public getRoom(): RoomSession | null {
-    return this.currentRoom;
+  // Create Room in Firebase DB
+  public async createRoom(
+    roomName: string,
+    playerName: string,
+    avatar: string,
+    maxPlayers: 2 | 4 | 6 | 8 = 8,
+    timerSetting: TimerSetting = 30,
+    difficultySetting: DifficultySetting = 'random',
+    gameMode: GameMode = 'cars'
+  ): Promise<RoomSession> {
+    const profile = getStoredPlayerProfile();
+    const finalName = playerName.trim() || profile.name;
+    const finalAvatar = avatar || profile.avatar;
+    saveStoredPlayerProfile(finalName, finalAvatar);
+
+    const roomId = generateRandomRoomCode();
+    const hostPlayer: PlayerProfile = {
+      id: profile.id,
+      name: finalName,
+      avatar: finalAvatar,
+      score: 0,
+      isHost: true,
+      joinedAt: Date.now(),
+    };
+
+    const roomData: RoomSession = {
+      roomId,
+      roomName: roomName.trim() || 'Speed Room',
+      status: 'lobby',
+      maxPlayers,
+      timerSetting,
+      difficultySetting,
+      gameMode,
+      hostId: profile.id,
+      players: {
+        [profile.id]: hostPlayer,
+      },
+      createdAt: Date.now(),
+    };
+
+    const roomRef = ref(db, `rooms/${roomId}`);
+    await set(roomRef, roomData);
+    return roomData;
+  }
+
+  // Join Room in Firebase DB
+  public async joinRoom(
+    roomIdInput: string,
+    playerName: string,
+    avatar: string
+  ): Promise<{ success: boolean; room?: RoomSession; error?: string }> {
+    const cleanRoomId = roomIdInput.trim().toUpperCase();
+    if (!cleanRoomId) {
+      return { success: false, error: 'Please enter a valid room code.' };
+    }
+
+    const roomRef = ref(db, `rooms/${cleanRoomId}`);
+    const snapshot = await get(roomRef);
+
+    if (!snapshot.exists()) {
+      return { success: false, error: 'Room code not found. Please check code.' };
+    }
+
+    const roomData = snapshot.val() as RoomSession;
+    const currentPlayers = roomData.players ? Object.values(roomData.players) : [];
+
+    if (currentPlayers.length >= roomData.maxPlayers) {
+      return { success: false, error: `Room is full (${currentPlayers.length}/${roomData.maxPlayers} players).` };
+    }
+
+    if (roomData.status !== 'lobby') {
+      return { success: false, error: 'Game is already in progress in this room.' };
+    }
+
+    const profile = getStoredPlayerProfile();
+    const finalName = playerName.trim() || profile.name;
+    const finalAvatar = avatar || profile.avatar;
+    saveStoredPlayerProfile(finalName, finalAvatar);
+
+    const newPlayer: PlayerProfile = {
+      id: profile.id,
+      name: finalName,
+      avatar: finalAvatar,
+      score: 0,
+      isHost: profile.id === roomData.hostId,
+      joinedAt: Date.now(),
+    };
+
+    const playerRef = ref(db, `rooms/${cleanRoomId}/players/${profile.id}`);
+    await set(playerRef, newPlayer);
+
+    roomData.players[profile.id] = newPlayer;
+    return { success: true, room: roomData };
+  }
+
+  // Update Max Players capacity
+  public async updateMaxPlayers(roomId: string, maxPlayers: 2 | 4 | 6 | 8): Promise<void> {
+    const roomRef = ref(db, `rooms/${roomId}`);
+    await update(roomRef, { maxPlayers });
+  }
+
+  // Kick Player (Host action)
+  public async kickPlayer(roomId: string, playerId: string): Promise<void> {
+    const playerRef = ref(db, `rooms/${roomId}/players/${playerId}`);
+    await remove(playerRef);
+  }
+
+  // Leave Room
+  public async leaveRoom(roomId: string, playerId: string): Promise<void> {
+    if (this.activeUnsubscribe) {
+      this.activeUnsubscribe();
+      this.activeUnsubscribe = null;
+    }
+    const playerRef = ref(db, `rooms/${roomId}/players/${playerId}`);
+    await remove(playerRef);
+  }
+
+  // Start Game (Host action)
+  public async startGame(roomId: string): Promise<void> {
+    const roomRef = ref(db, `rooms/${roomId}`);
+    await update(roomRef, { status: 'playing' });
   }
 }
 

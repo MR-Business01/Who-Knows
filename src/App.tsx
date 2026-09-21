@@ -179,6 +179,9 @@ export function App() {
       <MultiplayerModal
         isOpen={isMultiplayerOpen}
         onClose={() => setIsMultiplayerOpen(false)}
+        currentTimerSetting={timerSetting}
+        currentDifficultySetting={difficultySetting}
+        currentGameMode={gameMode}
       />
 
       {/* Settings Modal */}

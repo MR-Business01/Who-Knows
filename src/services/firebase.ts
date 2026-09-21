@@ -1,6 +1,7 @@
 // Firebase Realtime Database & Hosting Service
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 export const firebaseConfig = {
@@ -14,6 +15,7 @@ export const firebaseConfig = {
   measurementId: "G-S2XMN0BP0V"
 };
 
-// Initialize Firebase
+// Initialize Firebase App & Realtime DB
 export const app = initializeApp(firebaseConfig);
+export const db = getDatabase(app);
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
