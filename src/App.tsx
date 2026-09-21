@@ -41,6 +41,7 @@ export function App() {
     startGame,
     resetToHome,
     handleAnswer,
+    debugStep,
   } = useGameEngine(playCorrect, playWrong, playGameOver);
 
   const heroIcon = gameMode === 'cars' ? '🏎️' : gameMode === 'flags' ? '🚩' : '🏛️';
@@ -157,6 +158,32 @@ export function App() {
               feedback={feedback}
               onSelectOption={handleAnswer}
             />
+
+            {/* DEBUG SNIPPET BLOCK: Active Diagnostics */}
+            <div
+              id="quiz-debug-snippet"
+              className="mt-3 mx-4 p-2.5 rounded-xl bg-red-950/80 border border-red-500/80 text-[11px] font-mono text-red-200 shadow-lg text-left"
+            >
+              <div className="font-bold text-red-400 flex items-center justify-between border-b border-red-800/60 pb-1 mb-1">
+                <span>⚠️ [DEBUG TELEMETRY SNIPPET]</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-900/80 border border-red-700">LIVE</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                <div>State: <span className="text-white font-bold">{gameState}</span></div>
+                <div>Timer: <span className="text-white font-bold">{timeLeft}s / {timerSetting}s</span></div>
+                <div>Target ID: <span className="text-amber-300 font-bold">{currentQuestion?.logo?.id ?? 'NULL'}</span></div>
+                <div>Target Answer: <span className="text-emerald-300 font-bold">{currentQuestion?.targetAnswer ?? 'NULL'}</span></div>
+                <div>Feedback: <span className="text-white font-bold">{feedback}</span></div>
+                <div>Selected: <span className="text-white font-bold">{selectedOption ?? 'none'}</span></div>
+                <div>Opts Count: <span className="text-cyan-300 font-bold">{currentQuestion?.options?.length ?? 0}</span></div>
+                <div>Step Count: <span className="text-yellow-300 font-bold">{debugStep}</span></div>
+              </div>
+              {!currentQuestion?.logo && (
+                <div className="mt-1 pt-1 border-t border-red-800 text-rose-300 font-bold">
+                  ERROR: currentQuestion.logo is undefined / null!
+                </div>
+              )}
+            </div>
           </div>
         )}
 

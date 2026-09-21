@@ -113,7 +113,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
         if (mode === 0) {
           return dataset.slice(0, Math.min(50, total));
         } else if (mode === 1 || mode === 2 || mode === 4 || mode === 5) {
-          return dataset.slice(Math.min(100, total));
+          return dataset.slice(Math.min(100, total - 1));
         } else {
           return dataset.slice(Math.min(50, total), Math.min(100, total));
         }
@@ -145,13 +145,16 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     (step: number, currentCorrect: number, startTime: number): QuestionItem => {
       const fullDataset = getActiveDataset();
       let pool = getCandidatePool(step, currentCorrect, startTime);
+      if (!pool || pool.length === 0) {
+        pool = fullDataset;
+      }
       let unusedPool = pool.filter((logo) => !usedLogoIdsRef.current.has(logo.id));
 
       if (unusedPool.length < 1) {
-        unusedPool = pool.length > 0 ? pool : [...fullDataset];
+        unusedPool = [...fullDataset];
       }
 
-      const targetLogo = unusedPool[Math.floor(Math.random() * unusedPool.length)];
+      const targetLogo = unusedPool[Math.floor(Math.random() * unusedPool.length)] || fullDataset[0];
       usedLogoIdsRef.current.add(targetLogo.id);
 
       if (gameMode === 'capitals') {
@@ -368,5 +371,6 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     startGame,
     resetToHome,
     handleAnswer,
+    debugStep: patternStepRef.current,
   };
 }
