@@ -1,6 +1,6 @@
 import { db } from './firebase';
 import { ref, set, get, update, remove, onValue, off, type Unsubscribe } from 'firebase/database';
-import type { TimerSetting, DifficultySetting, GameMode } from '../hooks/useGameEngine';
+import type { TimerSetting, DifficultySetting, GameMode, QuestionItem } from '../hooks/useGameEngine';
 
 export interface PlayerProfile {
   id: string;
@@ -21,6 +21,8 @@ export interface RoomSession {
   gameMode: GameMode;
   hostId: string;
   players: Record<string, PlayerProfile>;
+  currentQuestionIndex?: number;
+  currentQuestion?: QuestionItem;
   createdAt: number;
 }
 
@@ -53,13 +55,14 @@ export function saveStoredPlayerProfile(name: string, avatar: string): void {
 }
 
 class MultiplayerService {
-  private activeUnsubscribe: Unsubscribe | null = null;
+  private activeSubscriptions = new Map<string, Unsubscribe>();
 
-  // Real-time listener subscription
+  // Real-time listener subscription (Isolated per roomId)
   public subscribeToRoom(roomId: string, callback: (room: RoomSession | null) => void): () => void {
-    if (this.activeUnsubscribe) {
-      this.activeUnsubscribe();
-      this.activeUnsubscribe = null;
+    const existing = this.activeSubscriptions.get(roomId);
+    if (existing) {
+      existing();
+      this.activeSubscriptions.delete(roomId);
     }
 
     const roomRef = ref(db, `rooms/${roomId}`);
@@ -75,15 +78,16 @@ class MultiplayerService {
         }
       },
       (error) => {
-        console.error('Firebase DB Subscription Error:', error);
+        console.error(`[Firebase] Subscription error on room ${roomId}:`, error);
         callback(null);
       }
     );
 
-    this.activeUnsubscribe = unsubscribe;
+    this.activeSubscriptions.set(roomId, unsubscribe);
+
     return () => {
       off(roomRef);
-      this.activeUnsubscribe = null;
+      this.activeSubscriptions.delete(roomId);
     };
   }
 
@@ -124,6 +128,7 @@ class MultiplayerService {
       players: {
         [profile.id]: hostPlayer,
       },
+      currentQuestionIndex: 0,
       createdAt: Date.now(),
     };
 
@@ -196,18 +201,41 @@ class MultiplayerService {
 
   // Leave Room
   public async leaveRoom(roomId: string, playerId: string): Promise<void> {
-    if (this.activeUnsubscribe) {
-      this.activeUnsubscribe();
-      this.activeUnsubscribe = null;
+    const unsub = this.activeSubscriptions.get(roomId);
+    if (unsub) {
+      unsub();
+      this.activeSubscriptions.delete(roomId);
     }
     const playerRef = ref(db, `rooms/${roomId}/players/${playerId}`);
     await remove(playerRef);
   }
 
   // Start Game (Host action)
-  public async startGame(roomId: string): Promise<void> {
+  public async startGame(roomId: string, initialQuestion?: QuestionItem): Promise<void> {
     const roomRef = ref(db, `rooms/${roomId}`);
-    await update(roomRef, { status: 'playing' });
+    const updatePayload: Partial<RoomSession> = {
+      status: 'playing',
+      currentQuestionIndex: 0,
+    };
+    if (initialQuestion) {
+      updatePayload.currentQuestion = initialQuestion;
+    }
+    await update(roomRef, updatePayload);
+  }
+
+  // Host-Authoritative: Advance Question
+  public async syncNextQuestion(roomId: string, questionIndex: number, nextQuestion: QuestionItem): Promise<void> {
+    const roomRef = ref(db, `rooms/${roomId}`);
+    await update(roomRef, {
+      currentQuestionIndex: questionIndex,
+      currentQuestion: nextQuestion,
+    });
+  }
+
+  // Sync Player Score
+  public async updatePlayerScore(roomId: string, playerId: string, newScore: number): Promise<void> {
+    const scoreRef = ref(db, `rooms/${roomId}/players/${playerId}/score`);
+    await set(scoreRef, newScore);
   }
 }
 

@@ -54,9 +54,10 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
 
   // Subscribe to Realtime Firebase updates when activeRoom is active
   useEffect(() => {
-    if (!activeRoom?.roomId) return;
+    const roomId = activeRoom?.roomId;
+    if (!roomId) return;
 
-    const unsubscribe = multiplayerService.subscribeToRoom(activeRoom.roomId, (updatedRoom) => {
+    const unsubscribe = multiplayerService.subscribeToRoom(roomId, (updatedRoom) => {
       if (updatedRoom) {
         setActiveRoom(updatedRoom);
         // If Host started the game, trigger match start on all connected devices
@@ -73,7 +74,7 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
     return () => {
       unsubscribe();
     };
-  }, [activeRoom?.roomId, onStartMatch, onClose]);
+  }, [activeRoom?.roomId]);
 
   if (!isOpen) return null;
 

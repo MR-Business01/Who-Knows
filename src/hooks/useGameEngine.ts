@@ -371,6 +371,6 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     startGame,
     resetToHome,
     handleAnswer,
-    debugStep: patternStepRef.current,
+    generateQuestion,
   };
 }
