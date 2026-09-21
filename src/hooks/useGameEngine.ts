@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CAR_LOGOS, type CarLogo } from '../data/carLogos';
 import { FLAG_LOGOS, type CountryFlag } from '../data/flagLogos';
+import { multiplayerService, getStoredPlayerProfile, type RoomSession } from '../services/multiplayerService';
 
 export type GameMode = 'cars' | 'flags' | 'capitals';
 export type TimerSetting = 15 | 30 | 60 | 90;
@@ -72,6 +73,15 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   const isTransitioningRef = useRef<boolean>(false);
   const gameStateRef = useRef<'idle' | 'playing' | 'ended'>('idle');
   const correctCountRef = useRef<number>(0);
+
+  const [activeMultiplayerRoom, setActiveMultiplayerRoom] = useState<RoomSession | null>(null);
+  const activeRoomRef = useRef<RoomSession | null>(null);
+  const myPlayerIdRef = useRef<string>(getStoredPlayerProfile().id);
+
+  // Sync activeRoomRef
+  useEffect(() => {
+    activeRoomRef.current = activeMultiplayerRoom;
+  }, [activeMultiplayerRoom]);
 
   // Sync gameStateRef & correctCountRef
   useEffect(() => {
@@ -258,16 +268,43 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     });
   }, [onPlayGameOver, timerSetting, difficultySetting, gameMode]);
 
-  const startGame = useCallback(() => {
+  // Listener for synchronized multiplayer room questions and state
+  useEffect(() => {
+    if (!activeMultiplayerRoom?.roomId || gameState !== 'playing') return;
+
+    const myProfile = getStoredPlayerProfile();
+    const isHost = activeMultiplayerRoom.hostId === myProfile.id;
+
+    const unsubscribe = multiplayerService.subscribeToRoom(activeMultiplayerRoom.roomId, (updatedRoom) => {
+      if (!updatedRoom) return;
+      setActiveMultiplayerRoom(updatedRoom);
+
+      // Synchronize question from Host
+      if (!isHost && updatedRoom.currentQuestion) {
+        setCurrentQuestion(updatedRoom.currentQuestion);
+        setFeedback('none');
+        setSelectedOption(null);
+        isTransitioningRef.current = false;
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [activeMultiplayerRoom?.roomId, gameState]);
+
+  // Start single-player game or multiplayer game
+  const startGame = useCallback((multiplayerRoom?: RoomSession) => {
     usedLogoIdsRef.current.clear();
     patternStepRef.current = 0;
     correctCountRef.current = 0;
     isTransitioningRef.current = false;
 
+    const roundTimer = multiplayerRoom ? multiplayerRoom.timerSetting : timerSetting;
     setScore(0);
     setCorrectCount(0);
     setWrongCount(0);
-    setTimeLeft(timerSetting);
+    setTimeLeft(roundTimer);
     setFeedback('none');
     setSelectedOption(null);
     setFinalStats(null);
@@ -275,8 +312,26 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     const now = Date.now();
     roundStartTimeRef.current = now;
 
-    const firstQuestion = generateQuestion(0, 0, now);
-    setCurrentQuestion(firstQuestion);
+    if (multiplayerRoom) {
+      setActiveMultiplayerRoom(multiplayerRoom);
+      activeRoomRef.current = multiplayerRoom;
+      const myProfile = getStoredPlayerProfile();
+      const isHost = multiplayerRoom.hostId === myProfile.id;
+
+      if (isHost) {
+        const firstQuestion = generateQuestion(0, 0, now);
+        setCurrentQuestion(firstQuestion);
+        // Sync initial question to Firebase
+        multiplayerService.startGame(multiplayerRoom.roomId, firstQuestion);
+      } else if (multiplayerRoom.currentQuestion) {
+        setCurrentQuestion(multiplayerRoom.currentQuestion);
+      }
+    } else {
+      setActiveMultiplayerRoom(null);
+      activeRoomRef.current = null;
+      const firstQuestion = generateQuestion(0, 0, now);
+      setCurrentQuestion(firstQuestion);
+    }
 
     setGameState('playing');
     gameStateRef.current = 'playing';
@@ -300,6 +355,8 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     }
     setGameState('idle');
     gameStateRef.current = 'idle';
+    setActiveMultiplayerRoom(null);
+    activeRoomRef.current = null;
     setFinalStats(null);
     setFeedback('none');
     setSelectedOption(null);
@@ -315,7 +372,17 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
       if (isCorrect) {
         setFeedback('correct');
-        setScore((s) => s + 10);
+        setScore((s) => {
+          const newScore = s + 10;
+          if (activeRoomRef.current) {
+            multiplayerService.updatePlayerScore(
+              activeRoomRef.current.roomId,
+              myPlayerIdRef.current,
+              newScore
+            );
+          }
+          return newScore;
+        });
         correctCountRef.current += 1;
         setCorrectCount(correctCountRef.current);
         if (onPlayCorrect) onPlayCorrect();
@@ -333,11 +400,25 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
       setTimeout(() => {
         if (gameStateRef.current === 'playing') {
-          setFeedback('none');
-          setSelectedOption(null);
-          setCurrentQuestion(generateQuestion(nextStep, nextCorrect, startTime));
+          const room = activeRoomRef.current;
+          const myProfile = getStoredPlayerProfile();
+          const isHost = !room || room.hostId === myProfile.id;
+
+          if (isHost) {
+            const nextQuestion = generateQuestion(nextStep, nextCorrect, startTime);
+            setFeedback('none');
+            setSelectedOption(null);
+            setCurrentQuestion(nextQuestion);
+
+            if (room) {
+              // Sync to Firebase for all players in room
+              multiplayerService.syncNextQuestion(room.roomId, nextStep, nextQuestion);
+            }
+            isTransitioningRef.current = false;
+          }
+        } else {
+          isTransitioningRef.current = false;
         }
-        isTransitioningRef.current = false;
       }, delayMs);
     },
     [currentQuestion, generateQuestion, onPlayCorrect, onPlayWrong]

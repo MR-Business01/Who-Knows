@@ -43,9 +43,9 @@ export function App() {
     handleAnswer,
   } = useGameEngine(playCorrect, playWrong, playGameOver);
 
-  const handleStartMultiplayerMatch = useCallback(() => {
+  const handleStartMultiplayerMatch = useCallback((room: Parameters<typeof startGame>[0]) => {
     setIsMultiplayerOpen(false);
-    startGame();
+    startGame(room);
   }, [startGame]);
 
   const heroIcon = gameMode === 'cars' ? '🏎️' : gameMode === 'flags' ? '🚩' : '🏛️';
@@ -101,7 +101,7 @@ export function App() {
 
             {/* Start Button */}
             <button
-              onClick={startGame}
+              onClick={() => startGame()}
               className="w-full max-w-xs py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 text-white font-black text-lg tracking-wide shadow-xl shadow-blue-600/40 hover:shadow-cyan-500/50 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 mb-4"
             >
               <Play className="w-6 h-6 fill-current text-white" />
@@ -175,7 +175,7 @@ export function App() {
       {gameState === 'ended' && (
         <StatsModal
           stats={finalStats}
-          onPlayAgain={startGame}
+          onPlayAgain={() => startGame()}
           onGoHome={resetToHome}
         />
       )}
