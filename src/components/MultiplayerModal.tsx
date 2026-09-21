@@ -6,11 +6,25 @@ import {
   type RoomSession,
 } from '../services/multiplayerService';
 import type { TimerSetting, DifficultySetting, GameMode } from '../hooks/useGameEngine';
-import { Users, X, PlusCircle, LogIn, Copy, Check, UserCheck, Trash2, Hourglass, ShieldAlert } from 'lucide-react';
+import {
+  Users,
+  X,
+  PlusCircle,
+  LogIn,
+  Copy,
+  Check,
+  UserCheck,
+  Trash2,
+  Hourglass,
+  ShieldAlert,
+  Play,
+  ArrowLeft,
+} from 'lucide-react';
 
 interface MultiplayerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onStartMatch: (room: RoomSession) => void;
   currentTimerSetting: TimerSetting;
   currentDifficultySetting: DifficultySetting;
   currentGameMode: GameMode;
@@ -19,6 +33,7 @@ interface MultiplayerModalProps {
 export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
   isOpen,
   onClose,
+  onStartMatch,
   currentTimerSetting,
   currentDifficultySetting,
   currentGameMode,
@@ -27,6 +42,7 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
   const [playerName, setPlayerName] = useState(profile.name);
   const [selectedAvatar, setSelectedAvatar] = useState(profile.avatar);
 
+  const [modeView, setModeView] = useState<'choice' | 'create' | 'join'>('choice');
   const [roomName, setRoomName] = useState<string>('');
   const [joinCode, setJoinCode] = useState<string>('');
   const [maxPlayersSetting, setMaxPlayersSetting] = useState<2 | 4 | 6 | 8>(8);
@@ -43,6 +59,11 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
     const unsubscribe = multiplayerService.subscribeToRoom(activeRoom.roomId, (updatedRoom) => {
       if (updatedRoom) {
         setActiveRoom(updatedRoom);
+        // If Host started the game, trigger match start on all connected devices
+        if (updatedRoom.status === 'playing') {
+          onStartMatch(updatedRoom);
+          onClose();
+        }
       } else {
         setActiveRoom(null);
         setErrorMessage('You left or room was closed.');
@@ -52,7 +73,7 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
     return () => {
       unsubscribe();
     };
-  }, [activeRoom?.roomId]);
+  }, [activeRoom?.roomId, onStartMatch, onClose]);
 
   if (!isOpen) return null;
 
@@ -96,6 +117,14 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
     }
   };
 
+  const handleHostStartGame = async () => {
+    if (activeRoom && activeRoom.hostId === profile.id) {
+      setIsLoading(true);
+      await multiplayerService.startGame(activeRoom.roomId);
+      setIsLoading(false);
+    }
+  };
+
   const handleCopyCode = () => {
     if (activeRoom?.roomId) {
       navigator.clipboard.writeText(activeRoom.roomId);
@@ -108,6 +137,7 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
     if (activeRoom) {
       await multiplayerService.leaveRoom(activeRoom.roomId, profile.id);
       setActiveRoom(null);
+      setModeView('choice');
     }
   };
 
@@ -124,7 +154,15 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
     }
   };
 
-  const playersList = activeRoom?.players ? Object.values(activeRoom.players) : [];
+  // Host ALWAYS appears at the top of the players list
+  const playersList = activeRoom?.players
+    ? Object.values(activeRoom.players).sort((a, b) => {
+        if (a.isHost) return -1;
+        if (b.isHost) return 1;
+        return a.joinedAt - b.joinedAt;
+      })
+    : [];
+
   const isHost = activeRoom ? activeRoom.hostId === profile.id : false;
 
   return (
@@ -133,14 +171,23 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl bg-slate-800/60 text-slate-400 hover:text-white transition-all"
+          className="absolute top-4 right-4 p-2 rounded-xl bg-slate-800/60 text-slate-400 hover:text-white transition-all z-10"
         >
           <X className="w-4 h-4" />
         </button>
 
-        {/* Title */}
+        {/* Title & Back Button */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+          {!activeRoom && modeView !== 'choice' && (
+            <button
+              onClick={() => setModeView('choice')}
+              className="p-1.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          )}
+
+          <div className="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shrink-0">
             <Users className="w-4 h-4" />
           </div>
           <div>
@@ -157,12 +204,12 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
           </div>
         )}
 
-        {/* Player Name & Avatar Customizer */}
+        {/* Player Name & Avatar Customizer (Clean 6x2 Grid, No Overflow) */}
         <div className="mb-4 p-3 rounded-2xl bg-slate-900/70 border border-slate-800">
           <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
             PLAYER PROFILE
           </label>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2.5">
             <input
               type="text"
               placeholder="Your Player Name"
@@ -173,16 +220,16 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
             <span className="text-xl p-1 bg-slate-800 rounded-xl">{selectedAvatar}</span>
           </div>
 
-          {/* Avatar selector */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          {/* Clean 6-Column Avatar Grid without scrollbars */}
+          <div className="grid grid-cols-6 gap-1.5">
             {AVATAR_OPTIONS.map((av) => (
               <button
                 key={av}
                 type="button"
                 onClick={() => setSelectedAvatar(av)}
-                className={`p-1.5 rounded-xl text-sm transition-all border ${
+                className={`py-1 rounded-xl text-center text-sm transition-all border ${
                   selectedAvatar === av
-                    ? 'bg-cyan-600/40 border-cyan-400 scale-110'
+                    ? 'bg-cyan-600/40 border-cyan-400 scale-105 shadow'
                     : 'bg-slate-950 border-slate-800 hover:border-slate-700'
                 }`}
               >
@@ -241,12 +288,16 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
                 </div>
               )}
 
-              {/* Realtime Players List */}
+              {/* Realtime Players List (HOST ALWAYS ON TOP) */}
               <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                 {playersList.map((p) => (
                   <div
                     key={p.id}
-                    className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs"
+                    className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
+                      p.isHost
+                        ? 'bg-indigo-950/40 border-indigo-700/60 shadow-inner'
+                        : 'bg-slate-900/80 border-slate-800'
+                    }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-base">{p.avatar}</span>
@@ -275,11 +326,22 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
               </div>
             </div>
 
-            {/* Subtitle Footer Message */}
-            <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-900/50 text-center text-xs text-indigo-200 font-medium flex items-center justify-center gap-2">
-              <Hourglass className="w-4 h-4 text-amber-400 animate-spin" />
-              <span>Wait other players or host starts the game</span>
-            </div>
+            {/* Host START GAME Button vs Guest Waiting Indicator */}
+            {isHost ? (
+              <button
+                onClick={handleHostStartGame}
+                disabled={isLoading}
+                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-500 text-white font-black text-base tracking-wide shadow-lg shadow-emerald-600/30 hover:shadow-cyan-500/40 active:scale-95 transition-all flex items-center justify-center gap-2 animate-pulse"
+              >
+                <Play className="w-5 h-5 fill-current" />
+                <span>START GAME NOW</span>
+              </button>
+            ) : (
+              <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-900/50 text-center text-xs text-indigo-200 font-medium flex items-center justify-center gap-2">
+                <Hourglass className="w-4 h-4 text-amber-400 animate-spin" />
+                <span>Wait other players or host starts the game</span>
+              </div>
+            )}
 
             {/* Leave Room Button */}
             <button
@@ -289,81 +351,112 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
               LEAVE ROOM
             </button>
           </div>
-        ) : (
-          /* CREATE / JOIN TABS */
+        ) : modeView === 'choice' ? (
+          /* INITIAL CHOICE STEP (Create vs Join) */
+          <div className="space-y-3 py-2">
+            <button
+              onClick={() => setModeView('create')}
+              className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-sm flex items-center justify-between shadow-lg shadow-indigo-600/30 active:scale-95 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <PlusCircle className="w-5 h-5 text-cyan-300" />
+                <div className="text-left">
+                  <div className="text-sm font-black">CREATE A ROOM</div>
+                  <div className="text-[11px] text-indigo-200 font-normal">Host a game for your friends</div>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setModeView('join')}
+              className="w-full py-4 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold text-sm flex items-center justify-between shadow-md active:scale-95 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <LogIn className="w-5 h-5 text-emerald-400" />
+                <div className="text-left">
+                  <div className="text-sm font-black">JOIN A ROOM</div>
+                  <div className="text-[11px] text-slate-400 font-normal">Enter code to join friends</div>
+                </div>
+              </div>
+            </button>
+
+            <div className="pt-2 text-center text-xs text-slate-400 flex items-center justify-center gap-1">
+              <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Realtime cross-device session active</span>
+            </div>
+          </div>
+        ) : modeView === 'create' ? (
+          /* CREATE ROOM FORM ONLY */
           <div className="space-y-4">
-            {/* Create Room Form */}
-            <form onSubmit={handleCreateRoom} className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 block">Create Friends Room</label>
+            <form onSubmit={handleCreateRoom} className="space-y-3">
+              <label className="text-xs font-bold text-slate-300 block uppercase tracking-wider">
+                Create Room Settings
+              </label>
 
               {/* Max Players Selector (2, 4, 6, 8) */}
-              <div className="flex items-center justify-between gap-2 mb-2 bg-slate-900/80 p-2 rounded-xl border border-slate-800">
-                <span className="text-xs text-slate-400 font-medium">Max Players:</span>
+              <div className="flex items-center justify-between gap-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                <span className="text-xs text-slate-300 font-medium">Max Players:</span>
                 <div className="flex gap-1">
                   {([2, 4, 6, 8] as const).map((num) => (
                     <button
                       key={num}
                       type="button"
                       onClick={() => setMaxPlayersSetting(num)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all border ${
+                      className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all border ${
                         maxPlayersSetting === num
                           ? 'bg-indigo-600 text-white border-indigo-400 shadow'
                           : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
                       }`}
                     >
-                      {num}
+                      {num}P
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Room Name (e.g. Speed Kings)"
-                  value={roomName}
-                  onChange={(e) => setRoomName(e.target.value)}
-                  className="flex-1 px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/30 disabled:opacity-50"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>Create</span>
-                </button>
-              </div>
+              <input
+                type="text"
+                placeholder="Room Name (e.g. Speed Kings)"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/30 disabled:opacity-50"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>CREATE ROOM NOW</span>
+              </button>
             </form>
+          </div>
+        ) : (
+          /* JOIN ROOM FORM ONLY */
+          <div className="space-y-4">
+            <form onSubmit={handleJoinRoom} className="space-y-3">
+              <label className="text-xs font-bold text-slate-300 block uppercase tracking-wider">
+                Enter Private Room Code
+              </label>
 
-            <div className="w-full h-px bg-slate-800 my-2" />
+              <input
+                type="text"
+                placeholder="Enter Code (e.g. X7K9P2)"
+                value={joinCode}
+                onChange={(e) => setJoinCode(e.target.value)}
+                className="w-full px-3 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 uppercase font-mono tracking-widest text-center font-black"
+              />
 
-            {/* Join Room Form */}
-            <form onSubmit={handleJoinRoom} className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 block">Join via Room Code</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Enter Code (e.g. X7K9P2)"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
-                  className="flex-1 px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 uppercase font-mono tracking-wider font-bold"
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-cyan-600/30 disabled:opacity-50"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>Join</span>
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-cyan-600/30 disabled:opacity-50"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>JOIN ROOM NOW</span>
+              </button>
             </form>
-
-            <div className="mt-3 p-2.5 rounded-2xl bg-indigo-950/30 border border-indigo-900/40 text-center text-xs text-slate-300 flex items-center justify-center gap-1.5">
-              <UserCheck className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span>Realtime cross-device sync active</span>
-            </div>
           </div>
         )}
       </div>

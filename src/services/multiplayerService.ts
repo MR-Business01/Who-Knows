@@ -26,7 +26,7 @@ export interface RoomSession {
 
 export const AVATAR_OPTIONS = ['🏎️', '⚡', '🚀', '🏆', '👑', '🦁', '🐯', '🎯', '🏁', '🔥', '💎', '🌟'];
 
-// Generate clean 6-character random alphanumeric room code (e.g., X7K9P2)
+// Clean 6-character random alphanumeric room code
 export function generateRandomRoomCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';

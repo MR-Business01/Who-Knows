@@ -179,6 +179,10 @@ export function App() {
       <MultiplayerModal
         isOpen={isMultiplayerOpen}
         onClose={() => setIsMultiplayerOpen(false)}
+        onStartMatch={() => {
+          setIsMultiplayerOpen(false);
+          startGame();
+        }}
         currentTimerSetting={timerSetting}
         currentDifficultySetting={difficultySetting}
         currentGameMode={gameMode}
