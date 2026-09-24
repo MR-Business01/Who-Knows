@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { CAR_LOGOS, type CarLogo } from '../data/carLogos';
 import { FLAG_LOGOS, type CountryFlag } from '../data/flagLogos';
 import { multiplayerService, getStoredPlayerProfile } from '../services/multiplayerService';
+import { generateQuestionPool } from '../utils/questionGenerator';
 import type {
   GameMode,
   TimerSetting,
@@ -263,33 +264,20 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     });
   }, [onPlayGameOver, timerSetting, difficultySetting, gameMode]);
 
+  const questionPoolRef = useRef<QuestionItem[]>([]);
+  const currentQuestionIdxRef = useRef<number>(0);
+
   // Listener for synchronized multiplayer room questions and state
   useEffect(() => {
     if (!activeMultiplayerRoom?.roomId || gameState !== 'playing') return;
-
-    const myProfile = getStoredPlayerProfile();
-    const isHost = activeMultiplayerRoom.hostId === myProfile.id;
 
     const unsubscribe = multiplayerService.subscribeToRoom(activeMultiplayerRoom.roomId, (updatedRoom) => {
       if (!updatedRoom) return;
       setActiveMultiplayerRoom(updatedRoom);
 
-      // If game has ended remotely
+      // If game has ended remotely by Host
       if (updatedRoom.status === 'ended' && gameStateRef.current === 'playing') {
         endGame();
-        return;
-      }
-
-      // Synchronize question from Host
-      if (!isHost && updatedRoom.currentQuestion) {
-        setCurrentQuestion(updatedRoom.currentQuestion);
-        setFeedback('none');
-        setSelectedOption(null);
-        isTransitioningRef.current = false;
-        if (transitionTimeoutRef.current) {
-          clearTimeout(transitionTimeoutRef.current);
-          transitionTimeoutRef.current = null;
-        }
       }
     });
 
@@ -305,6 +293,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     correctCountRef.current = 0;
     wrongCountRef.current = 0;
     scoreRef.current = 0;
+    currentQuestionIdxRef.current = 0;
     isTransitioningRef.current = false;
     if (transitionTimeoutRef.current) {
       clearTimeout(transitionTimeoutRef.current);
@@ -312,16 +301,18 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     }
 
     const roundTimer = multiplayerRoom ? multiplayerRoom.timerSetting : timerSetting;
+    const mode = multiplayerRoom ? multiplayerRoom.gameMode : gameMode;
+    const diff = multiplayerRoom ? multiplayerRoom.difficultySetting : difficultySetting;
+
     if (multiplayerRoom) {
-      setGameMode(multiplayerRoom.gameMode);
-      setTimerSetting(multiplayerRoom.timerSetting);
-      setDifficultySetting(multiplayerRoom.difficultySetting);
+      setGameMode(mode);
+      setTimerSetting(roundTimer);
+      setDifficultySetting(diff);
     }
 
     setScore(0);
     setCorrectCount(0);
     setWrongCount(0);
-    setTimeLeft(roundTimer);
     setFeedback('none');
     setSelectedOption(null);
     setFinalStats(null);
@@ -332,21 +323,25 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     if (multiplayerRoom) {
       setActiveMultiplayerRoom(multiplayerRoom);
       activeRoomRef.current = multiplayerRoom;
-      const myProfile = getStoredPlayerProfile();
-      const isHost = multiplayerRoom.hostId === myProfile.id;
 
-      if (isHost) {
-        const firstQuestion = generateQuestion(0, 0, now);
-        setCurrentQuestion(firstQuestion);
-        multiplayerService.startGame(multiplayerRoom.roomId, firstQuestion);
-      } else if (multiplayerRoom.currentQuestion) {
-        setCurrentQuestion(multiplayerRoom.currentQuestion);
-      }
+      // Deterministic shared pool using room seed
+      const seed = multiplayerRoom.seed || multiplayerRoom.createdAt || 12345;
+      const pool = generateQuestionPool(mode, diff, 100, seed);
+      questionPoolRef.current = pool;
+      setCurrentQuestion(pool[0]);
+
+      // Calculate accurate synchronized time remaining from host gameStartTime if available
+      const startTimestamp = multiplayerRoom.gameStartTime || multiplayerRoom.createdAt || now;
+      const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+      const remainingTime = Math.max(1, roundTimer - elapsed);
+      setTimeLeft(remainingTime);
     } else {
       setActiveMultiplayerRoom(null);
       activeRoomRef.current = null;
+      questionPoolRef.current = [];
       const firstQuestion = generateQuestion(0, 0, now);
       setCurrentQuestion(firstQuestion);
+      setTimeLeft(roundTimer);
     }
 
     setGameState('playing');
@@ -362,7 +357,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
         return prev - 1;
       });
     }, 1000);
-  }, [timerSetting, generateQuestion, endGame]);
+  }, [timerSetting, gameMode, difficultySetting, generateQuestion, endGame]);
 
   const resetToHome = useCallback(() => {
     if (timerRef.current) {
@@ -377,6 +372,8 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     gameStateRef.current = 'idle';
     setActiveMultiplayerRoom(null);
     activeRoomRef.current = null;
+    questionPoolRef.current = [];
+    currentQuestionIdxRef.current = 0;
     setFinalStats(null);
     setFeedback('none');
     setSelectedOption(null);
@@ -426,24 +423,26 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
 
       setTimeout(() => {
         if (gameStateRef.current === 'playing') {
-          const room = activeRoomRef.current;
-          const myProfile = getStoredPlayerProfile();
-          const isHost = !room || room.hostId === myProfile.id;
-
-          if (isHost) {
+          // Both Host and Guests progress to their own next question independently
+          if (activeRoomRef.current && questionPoolRef.current.length > 0) {
+            currentQuestionIdxRef.current += 1;
+            const nextQ =
+              questionPoolRef.current[currentQuestionIdxRef.current] ||
+              generateQuestion(nextStep, nextCorrect, startTime);
+            setFeedback('none');
+            setSelectedOption(null);
+            setCurrentQuestion(nextQ);
+          } else {
+            // Solo play
             const nextQuestion = generateQuestion(nextStep, nextCorrect, startTime);
             setFeedback('none');
             setSelectedOption(null);
             setCurrentQuestion(nextQuestion);
-
-            if (room) {
-              multiplayerService.syncNextQuestion(room.roomId, nextStep, nextQuestion);
-            }
-            isTransitioningRef.current = false;
-            if (transitionTimeoutRef.current) {
-              clearTimeout(transitionTimeoutRef.current);
-              transitionTimeoutRef.current = null;
-            }
+          }
+          isTransitioningRef.current = false;
+          if (transitionTimeoutRef.current) {
+            clearTimeout(transitionTimeoutRef.current);
+            transitionTimeoutRef.current = null;
           }
         } else {
           isTransitioningRef.current = false;

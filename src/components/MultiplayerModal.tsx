@@ -5,7 +5,7 @@ import {
   AVATAR_OPTIONS,
 } from '../services/multiplayerService';
 import type { TimerSetting, DifficultySetting, GameMode, RoomSession } from '../types/quiz';
-import { generateQuizQuestion } from '../utils/questionGenerator';
+import { generateQuestionPool } from '../utils/questionGenerator';
 import {
   Users,
   X,
@@ -121,11 +121,16 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
   const handleHostStartGame = async () => {
     if (activeRoom && activeRoom.hostId === profile.id) {
       setIsLoading(true);
-      const firstQ = generateQuizQuestion(
+      const seed = Math.floor(Math.random() * 1000000);
+      const startTime = Date.now();
+      const pool = generateQuestionPool(
         activeRoom.gameMode || currentGameMode,
-        activeRoom.difficultySetting || currentDifficultySetting
+        activeRoom.difficultySetting || currentDifficultySetting,
+        100,
+        seed
       );
-      await multiplayerService.startGame(activeRoom.roomId, firstQ);
+      const firstQ = pool[0];
+      await multiplayerService.startGame(activeRoom.roomId, firstQ, seed, startTime);
       setIsLoading(false);
     }
   };

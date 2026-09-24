@@ -28,7 +28,7 @@ export const TimerBar: React.FC<TimerBarProps> = ({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto mb-3 px-4">
+    <div className="w-full max-w-md mx-auto mb-1.5 px-3">
       {/* Top metrics row */}
       <div className="flex items-center justify-between text-xs font-bold text-slate-300 mb-1.5 px-1">
         <div className="flex items-center gap-1.5">

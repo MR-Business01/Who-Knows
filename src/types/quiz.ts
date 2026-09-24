@@ -46,6 +46,8 @@ export interface RoomSession {
   gameMode: GameMode;
   hostId: string;
   players: Record<string, PlayerProfile>;
+  seed?: number;
+  gameStartTime?: number;
   currentQuestionIndex?: number;
   currentQuestion?: QuestionItem;
   createdAt: number;

@@ -188,14 +188,26 @@ class MultiplayerService {
   }
 
   // Start Game (Host action)
-  public async startGame(roomId: string, initialQuestion?: QuestionItem): Promise<void> {
+  public async startGame(
+    roomId: string,
+    initialQuestion?: QuestionItem,
+    seed?: number,
+    gameStartTime?: number
+  ): Promise<void> {
     const roomRef = ref(db, `rooms/${roomId}`);
     const updatePayload: Partial<RoomSession> = {
       status: 'playing',
       currentQuestionIndex: 0,
+      createdAt: Date.now(),
     };
     if (initialQuestion) {
       updatePayload.currentQuestion = initialQuestion;
+    }
+    if (seed !== undefined) {
+      updatePayload.seed = seed;
+    }
+    if (gameStartTime !== undefined) {
+      updatePayload.gameStartTime = gameStartTime;
     }
     await update(roomRef, updatePayload);
   }

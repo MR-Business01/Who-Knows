@@ -35,34 +35,34 @@ export const LogoCard: React.FC<LogoCardProps> = ({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto px-4 flex-1 flex flex-col items-center justify-center min-h-[260px] max-h-[42vh] relative">
+    <div className="w-full max-w-md mx-auto px-3 flex-1 flex flex-col items-center justify-center min-h-[200px] max-h-[38vh] my-1 relative">
       {/* Big Bold Country Name Header for Capitals Quiz */}
       {gameMode === 'capitals' && countryName && (
-        <div className="mb-2 text-center">
-          <span className="text-xs uppercase tracking-widest text-slate-400 font-bold block mb-0.5">GUESS THE CAPITAL OF</span>
-          <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-200 tracking-tight font-sans drop-shadow-md">
+        <div className="mb-1 text-center">
+          <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold block">GUESS THE CAPITAL OF</span>
+          <h2 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-200 tracking-tight font-sans drop-shadow-md">
             {countryName.toUpperCase()}
           </h2>
         </div>
       )}
 
       <div
-        className={`w-full h-full rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-300 border ${borderClasses}`}
+        className={`w-full h-full rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-300 border ${borderClasses}`}
         style={{ backgroundColor: 'rgba(235, 238, 243, 0.92)', backdropFilter: 'blur(16px)' }}
       >
         {/* Fullscreen Focus Floating Icon */}
         <button
           onClick={onToggleFullscreen}
           title="Fullscreen Focus"
-          className="absolute top-3 right-3 p-2 rounded-xl bg-slate-900/70 text-slate-200 hover:text-white backdrop-blur-md border border-slate-700/50 z-10 transition-transform active:scale-95 shadow-md"
+          className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-slate-900/70 text-slate-200 hover:text-white backdrop-blur-md border border-slate-700/50 z-10 transition-transform active:scale-95 shadow-md"
         >
-          <Maximize2 className="w-4 h-4" />
+          <Maximize2 className="w-3.5 h-3.5" />
         </button>
 
         {/* Loading Overlay */}
         {isLoading && !hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-200/50 backdrop-blur-sm z-0">
-            <div className="w-10 h-10 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
           </div>
         )}
 
@@ -71,7 +71,7 @@ export const LogoCard: React.FC<LogoCardProps> = ({
           <img
             src={logo.image_url}
             alt={gameMode === 'cars' ? 'Guess Car Logo' : 'Country Flag'}
-            className={`max-w-full max-h-[220px] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition-all duration-300 ${
+            className={`max-w-full max-h-[170px] sm:max-h-[200px] object-contain drop-shadow-[0_6px_12px_rgba(0,0,0,0.3)] transition-all duration-300 ${
               isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
             }`}
             onLoad={() => setIsLoading(false)}

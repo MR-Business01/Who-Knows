@@ -31,7 +31,6 @@ export function App() {
     updateTimerSetting,
     updateDifficultySetting,
     currentQuestion,
-    score,
     correctCount,
     wrongCount,
     feedback,
@@ -58,25 +57,26 @@ export function App() {
       : 'Guess the capital city for each country';
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between py-4 px-2 select-none relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-between pt-16 pb-2 px-2 select-none relative overflow-hidden">
       <div className="absolute top-[-10%] left-[20%] w-[300px] h-[300px] bg-blue-600/15 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[20%] w-[300px] h-[300px] bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="w-full max-w-md flex-1 flex flex-col justify-between z-10">
-        <Navbar
-          score={score}
-          highScore={highScore}
-          gameMode={gameMode}
-          timerSetting={timerSetting}
-          difficultySetting={difficultySetting}
-          soundEnabled={soundEnabled}
-          onToggleSound={toggleSound}
-          isFullscreen={isFullscreen}
-          onToggleFullscreen={toggleFullscreen}
-          onOpenMultiplayer={() => setIsMultiplayerOpen(true)}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-        />
+      {/* Fixed Header */}
+      <Navbar
+        highScore={highScore}
+        gameMode={gameMode}
+        timerSetting={timerSetting}
+        difficultySetting={difficultySetting}
+        soundEnabled={soundEnabled}
+        onToggleSound={toggleSound}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={toggleFullscreen}
+        onOpenMultiplayer={() => setIsMultiplayerOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        isPlaying={gameState === 'playing'}
+      />
 
+      <div className="w-full max-w-md flex-1 flex flex-col justify-between z-10">
         <AdContainer type="banner" />
 
         {gameState === 'idle' ? (
@@ -175,7 +175,7 @@ export function App() {
         )}
 
         {/* Centered Clean Footer */}
-        <footer className="w-full max-w-md mx-auto mt-4 px-4 text-center text-xs font-medium text-slate-400">
+        <footer className="w-full max-w-md mx-auto mt-2 px-4 text-center text-xs font-medium text-slate-400">
           Created with 🤍
         </footer>
       </div>
