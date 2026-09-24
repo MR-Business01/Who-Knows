@@ -1,5 +1,5 @@
 import React from 'react';
-import type { GameMode } from '../hooks/useGameEngine';
+import type { GameMode } from '../types/quiz';
 import { Flag, Car, Landmark, Sparkles } from 'lucide-react';
 
 interface GameSelectorProps {

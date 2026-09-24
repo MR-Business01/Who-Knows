@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TimerSetting, DifficultySetting } from '../hooks/useGameEngine';
+import type { TimerSetting, DifficultySetting } from '../types/quiz';
 import { Settings, X, Timer, Gauge, Check } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -120,10 +120,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
+        {/* Settings notice */}
+        <p className="text-[11px] text-slate-400 text-center italic mt-3">
+          Changes will apply to your next round or room creation.
+        </p>
+
         {/* Done Button */}
         <button
           onClick={onClose}
-          className="w-full mt-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 hover:shadow-cyan-500/40 active:scale-95 transition-all"
+          className="w-full mt-3 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 hover:shadow-cyan-500/40 active:scale-95 transition-all"
         >
           SAVE & CLOSE
         </button>

@@ -1,34 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CAR_LOGOS, type CarLogo } from '../data/carLogos';
 import { FLAG_LOGOS, type CountryFlag } from '../data/flagLogos';
-import { multiplayerService, getStoredPlayerProfile, type RoomSession } from '../services/multiplayerService';
+import { multiplayerService, getStoredPlayerProfile } from '../services/multiplayerService';
+import type {
+  GameMode,
+  TimerSetting,
+  DifficultySetting,
+  FeedbackState,
+  GameStats,
+  QuestionItem,
+  RoomSession,
+} from '../types/quiz';
 
-export type GameMode = 'cars' | 'flags' | 'capitals';
-export type TimerSetting = 15 | 30 | 60 | 90;
-export type DifficultySetting = 'easy' | 'medium' | 'hard' | 'random';
-
-export interface GameStats {
-  score: number;
-  totalAnswered: number;
-  correctCount: number;
-  wrongCount: number;
-  avgSpeedSeconds: number;
-  accuracyPercentage: number;
-  highScore: number;
-  isNewHighScore: boolean;
-  timerSetting: TimerSetting;
-  difficultySetting: DifficultySetting;
-  gameMode: GameMode;
-}
-
-export interface QuestionItem {
-  logo: CarLogo | CountryFlag;
-  targetAnswer: string;
-  countryName?: string;
-  options: string[];
-}
-
-export type FeedbackState = 'none' | 'correct' | 'wrong';
+export type { GameMode, TimerSetting, DifficultySetting, FeedbackState, GameStats, QuestionItem };
 
 const CORRECT_DELAY_MS = 250;
 const WRONG_DELAY_MS = 1000;
@@ -71,8 +55,11 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
   const patternStepRef = useRef<number>(0);
   const usedLogoIdsRef = useRef<Set<number>>(new Set());
   const isTransitioningRef = useRef<boolean>(false);
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gameStateRef = useRef<'idle' | 'playing' | 'ended'>('idle');
   const correctCountRef = useRef<number>(0);
+  const wrongCountRef = useRef<number>(0);
+  const scoreRef = useRef<number>(0);
 
   const [activeMultiplayerRoom, setActiveMultiplayerRoom] = useState<RoomSession | null>(null);
   const activeRoomRef = useRef<RoomSession | null>(null);
@@ -83,7 +70,7 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     activeRoomRef.current = activeMultiplayerRoom;
   }, [activeMultiplayerRoom]);
 
-  // Sync gameStateRef & correctCountRef
+  // Sync gameStateRef
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
@@ -222,49 +209,57 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
 
     setGameState('ended');
     gameStateRef.current = 'ended';
     if (onPlayGameOver) onPlayGameOver();
 
-    setCorrectCount((finalCorrect) => {
-      setWrongCount((finalWrong) => {
-        setScore((finalScore) => {
-          const totalAnswered = finalCorrect + finalWrong;
-          const totalTimeUsed = timerSetting;
-          const avgSpeedSeconds = totalAnswered > 0 ? parseFloat((totalTimeUsed / totalAnswered).toFixed(2)) : 0;
-          const accuracyPercentage = totalAnswered > 0 ? Math.round((finalCorrect / totalAnswered) * 100) : 0;
+    // End room if we are host of an active multiplayer room
+    const currentRoom = activeRoomRef.current;
+    if (currentRoom) {
+      const myProfile = getStoredPlayerProfile();
+      if (currentRoom.hostId === myProfile.id) {
+        multiplayerService.endRoom(currentRoom.roomId);
+      }
+    }
 
-          let isNewHighScore = false;
-          const key = `quiz_highscore_${gameMode}`;
-          let currentHigh = parseInt(localStorage.getItem(key) || '0', 10);
+    const finalCorrect = correctCountRef.current;
+    const finalWrong = wrongCountRef.current;
+    const finalScore = scoreRef.current;
+    const totalAnswered = finalCorrect + finalWrong;
+    const currentTimer = activeRoomRef.current ? activeRoomRef.current.timerSetting : timerSetting;
+    const currentDiff = activeRoomRef.current ? activeRoomRef.current.difficultySetting : difficultySetting;
+    const currentMode = activeRoomRef.current ? activeRoomRef.current.gameMode : gameMode;
+    const avgSpeedSeconds = totalAnswered > 0 ? parseFloat((currentTimer / totalAnswered).toFixed(2)) : 0;
+    const accuracyPercentage = totalAnswered > 0 ? Math.round((finalCorrect / totalAnswered) * 100) : 0;
 
-          if (finalScore > currentHigh) {
-            currentHigh = finalScore;
-            localStorage.setItem(key, finalScore.toString());
-            setHighScore(finalScore);
-            isNewHighScore = true;
-          }
+    let isNewHighScore = false;
+    const key = `quiz_highscore_${currentMode}`;
+    let currentHigh = parseInt(localStorage.getItem(key) || '0', 10);
 
-          setFinalStats({
-            score: finalScore,
-            totalAnswered,
-            correctCount: finalCorrect,
-            wrongCount: finalWrong,
-            avgSpeedSeconds,
-            accuracyPercentage,
-            highScore: currentHigh,
-            isNewHighScore,
-            timerSetting,
-            difficultySetting,
-            gameMode,
-          });
+    if (finalScore > currentHigh) {
+      currentHigh = finalScore;
+      localStorage.setItem(key, finalScore.toString());
+      setHighScore(finalScore);
+      isNewHighScore = true;
+    }
 
-          return finalScore;
-        });
-        return finalWrong;
-      });
-      return finalCorrect;
+    setFinalStats({
+      score: finalScore,
+      totalAnswered,
+      correctCount: finalCorrect,
+      wrongCount: finalWrong,
+      avgSpeedSeconds,
+      accuracyPercentage,
+      highScore: currentHigh,
+      isNewHighScore,
+      timerSetting: currentTimer,
+      difficultySetting: currentDiff,
+      gameMode: currentMode,
     });
   }, [onPlayGameOver, timerSetting, difficultySetting, gameMode]);
 
@@ -279,28 +274,50 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       if (!updatedRoom) return;
       setActiveMultiplayerRoom(updatedRoom);
 
+      // If game has ended remotely
+      if (updatedRoom.status === 'ended' && gameStateRef.current === 'playing') {
+        endGame();
+        return;
+      }
+
       // Synchronize question from Host
       if (!isHost && updatedRoom.currentQuestion) {
         setCurrentQuestion(updatedRoom.currentQuestion);
         setFeedback('none');
         setSelectedOption(null);
         isTransitioningRef.current = false;
+        if (transitionTimeoutRef.current) {
+          clearTimeout(transitionTimeoutRef.current);
+          transitionTimeoutRef.current = null;
+        }
       }
     });
 
     return () => {
       unsubscribe();
     };
-  }, [activeMultiplayerRoom?.roomId, gameState]);
+  }, [activeMultiplayerRoom?.roomId, gameState, endGame]);
 
   // Start single-player game or multiplayer game
   const startGame = useCallback((multiplayerRoom?: RoomSession) => {
     usedLogoIdsRef.current.clear();
     patternStepRef.current = 0;
     correctCountRef.current = 0;
+    wrongCountRef.current = 0;
+    scoreRef.current = 0;
     isTransitioningRef.current = false;
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
 
     const roundTimer = multiplayerRoom ? multiplayerRoom.timerSetting : timerSetting;
+    if (multiplayerRoom) {
+      setGameMode(multiplayerRoom.gameMode);
+      setTimerSetting(multiplayerRoom.timerSetting);
+      setDifficultySetting(multiplayerRoom.difficultySetting);
+    }
+
     setScore(0);
     setCorrectCount(0);
     setWrongCount(0);
@@ -321,7 +338,6 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       if (isHost) {
         const firstQuestion = generateQuestion(0, 0, now);
         setCurrentQuestion(firstQuestion);
-        // Sync initial question to Firebase
         multiplayerService.startGame(multiplayerRoom.roomId, firstQuestion);
       } else if (multiplayerRoom.currentQuestion) {
         setCurrentQuestion(multiplayerRoom.currentQuestion);
@@ -353,6 +369,10 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
     setGameState('idle');
     gameStateRef.current = 'idle';
     setActiveMultiplayerRoom(null);
@@ -367,28 +387,34 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
       if (gameStateRef.current !== 'playing' || isTransitioningRef.current || !currentQuestion) return;
 
       isTransitioningRef.current = true;
+      // Safety fallback: if not reset within 5 seconds, unlock answering
+      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = setTimeout(() => {
+        isTransitioningRef.current = false;
+      }, 5000);
+
       setSelectedOption(chosenAnswer);
       const isCorrect = chosenAnswer === currentQuestion.targetAnswer;
 
       if (isCorrect) {
         setFeedback('correct');
-        setScore((s) => {
-          const newScore = s + 10;
-          if (activeRoomRef.current) {
-            multiplayerService.updatePlayerScore(
-              activeRoomRef.current.roomId,
-              myPlayerIdRef.current,
-              newScore
-            );
-          }
-          return newScore;
-        });
+        const newScore = scoreRef.current + 10;
+        scoreRef.current = newScore;
+        setScore(newScore);
+        if (activeRoomRef.current) {
+          multiplayerService.updatePlayerScore(
+            activeRoomRef.current.roomId,
+            myPlayerIdRef.current,
+            newScore
+          );
+        }
         correctCountRef.current += 1;
         setCorrectCount(correctCountRef.current);
         if (onPlayCorrect) onPlayCorrect();
       } else {
         setFeedback('wrong');
-        setWrongCount((w) => w + 1);
+        wrongCountRef.current += 1;
+        setWrongCount(wrongCountRef.current);
         if (onPlayWrong) onPlayWrong();
       }
 
@@ -411,13 +437,20 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
             setCurrentQuestion(nextQuestion);
 
             if (room) {
-              // Sync to Firebase for all players in room
               multiplayerService.syncNextQuestion(room.roomId, nextStep, nextQuestion);
             }
             isTransitioningRef.current = false;
+            if (transitionTimeoutRef.current) {
+              clearTimeout(transitionTimeoutRef.current);
+              transitionTimeoutRef.current = null;
+            }
           }
         } else {
           isTransitioningRef.current = false;
+          if (transitionTimeoutRef.current) {
+            clearTimeout(transitionTimeoutRef.current);
+            transitionTimeoutRef.current = null;
+          }
         }
       }, delayMs);
     },
@@ -428,6 +461,9 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+      }
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
       }
     };
   }, []);
@@ -452,6 +488,5 @@ export function useGameEngine(onPlayCorrect?: () => void, onPlayWrong?: () => vo
     startGame,
     resetToHome,
     handleAnswer,
-    generateQuestion,
   };
 }

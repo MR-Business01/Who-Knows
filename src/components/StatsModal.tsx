@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import type { GameStats } from '../hooks/useGameEngine';
+import type { GameStats } from '../types/quiz';
 import confetti from 'canvas-confetti';
 import { Trophy, Zap, CheckCircle2, XCircle, RotateCcw, Share2, Award, Home } from 'lucide-react';
 
@@ -10,10 +10,8 @@ interface StatsModalProps {
 }
 
 export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGoHome }) => {
-  if (!stats) return null;
-
   useEffect(() => {
-    if (stats.isNewHighScore) {
+    if (stats?.isNewHighScore) {
       confetti({
         particleCount: 100,
         spread: 70,
@@ -21,7 +19,9 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
         colors: ['#38bdf8', '#34d399', '#f43f5e', '#fbbf24'],
       });
     }
-  }, [stats.isNewHighScore]);
+  }, [stats?.isNewHighScore]);
+
+  if (!stats) return null;
 
   const gameCategoryTitle =
     stats.gameMode === 'cars'

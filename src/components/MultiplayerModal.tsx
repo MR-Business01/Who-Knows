@@ -3,9 +3,9 @@ import {
   multiplayerService,
   getStoredPlayerProfile,
   AVATAR_OPTIONS,
-  type RoomSession,
 } from '../services/multiplayerService';
-import type { TimerSetting, DifficultySetting, GameMode } from '../hooks/useGameEngine';
+import type { TimerSetting, DifficultySetting, GameMode, RoomSession } from '../types/quiz';
+import { generateQuizQuestion } from '../utils/questionGenerator';
 import {
   Users,
   X,
@@ -121,7 +121,11 @@ export const MultiplayerModal: React.FC<MultiplayerModalProps> = ({
   const handleHostStartGame = async () => {
     if (activeRoom && activeRoom.hostId === profile.id) {
       setIsLoading(true);
-      await multiplayerService.startGame(activeRoom.roomId);
+      const firstQ = generateQuizQuestion(
+        activeRoom.gameMode || currentGameMode,
+        activeRoom.difficultySetting || currentDifficultySetting
+      );
+      await multiplayerService.startGame(activeRoom.roomId, firstQ);
       setIsLoading(false);
     }
   };

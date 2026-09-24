@@ -1,30 +1,7 @@
 import { db } from './firebase';
 import { ref, set, get, update, remove, onValue, off, type Unsubscribe } from 'firebase/database';
-import type { TimerSetting, DifficultySetting, GameMode, QuestionItem } from '../hooks/useGameEngine';
-
-export interface PlayerProfile {
-  id: string;
-  name: string;
-  avatar: string;
-  score: number;
-  isHost: boolean;
-  joinedAt: number;
-}
-
-export interface RoomSession {
-  roomId: string;
-  roomName: string;
-  status: 'lobby' | 'playing' | 'ended';
-  maxPlayers: 2 | 4 | 6 | 8;
-  timerSetting: TimerSetting;
-  difficultySetting: DifficultySetting;
-  gameMode: GameMode;
-  hostId: string;
-  players: Record<string, PlayerProfile>;
-  currentQuestionIndex?: number;
-  currentQuestion?: QuestionItem;
-  createdAt: number;
-}
+import type { TimerSetting, DifficultySetting, GameMode, QuestionItem, PlayerProfile, RoomSession } from '../types/quiz';
+export type { PlayerProfile, RoomSession };
 
 export const AVATAR_OPTIONS = ['🏎️', '⚡', '🚀', '🏆', '👑', '🦁', '🐯', '🎯', '🏁', '🔥', '💎', '🌟'];
 
@@ -236,6 +213,12 @@ class MultiplayerService {
   public async updatePlayerScore(roomId: string, playerId: string, newScore: number): Promise<void> {
     const scoreRef = ref(db, `rooms/${roomId}/players/${playerId}/score`);
     await set(scoreRef, newScore);
+  }
+
+  // End Game (Host action)
+  public async endRoom(roomId: string): Promise<void> {
+    const roomRef = ref(db, `rooms/${roomId}`);
+    await update(roomRef, { status: 'ended' });
   }
 }
 

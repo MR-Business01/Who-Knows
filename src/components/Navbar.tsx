@@ -1,6 +1,6 @@
 import React from 'react';
 import { Volume2, VolumeX, Maximize2, Minimize2, Users, Trophy, Settings } from 'lucide-react';
-import type { TimerSetting, DifficultySetting, GameMode } from '../hooks/useGameEngine';
+import type { TimerSetting, DifficultySetting, GameMode } from '../types/quiz';
 
 interface NavbarProps {
   score: number;

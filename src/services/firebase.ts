@@ -3,16 +3,16 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getDatabase } from "firebase/database";
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration loaded securely from environment variables
 export const firebaseConfig = {
-  apiKey: "AIzaSyA-ooY53jgPNbOqFj8VvmzDpgcCiIVPcK0",
-  authDomain: "who-knows-8d326.firebaseapp.com",
-  databaseURL: "https://who-knows-8d326-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "who-knows-8d326",
-  storageBucket: "who-knows-8d326.firebasestorage.app",
-  messagingSenderId: "339464203635",
-  appId: "1:339464203635:web:8b9c07819977335dfba906",
-  measurementId: "G-S2XMN0BP0V"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || ""
 };
 
 // Initialize Firebase App & Realtime DB

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { FeedbackState } from '../hooks/useGameEngine';
+import type { FeedbackState } from '../types/quiz';
 
 interface AnswerOptionsProps {
   options: string[];

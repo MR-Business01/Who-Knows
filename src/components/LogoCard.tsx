@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { CarLogo } from '../data/carLogos';
 import type { CountryFlag } from '../data/flagLogos';
-import type { FeedbackState, GameMode } from '../hooks/useGameEngine';
+import type { FeedbackState, GameMode } from '../types/quiz';
 import { Maximize2, ShieldAlert } from 'lucide-react';
 
 interface LogoCardProps {
