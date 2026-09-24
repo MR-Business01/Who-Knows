@@ -27,8 +27,8 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
     stats.gameMode === 'cars'
       ? 'Cars Logo Quiz'
       : stats.gameMode === 'flags'
-      ? 'World Flags Quiz'
-      : 'Country Capitals Quiz';
+        ? 'World Flags Quiz'
+        : 'Country Capitals Quiz';
 
   const handleShare = () => {
     if (navigator.share) {
@@ -36,7 +36,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
         title: `${gameCategoryTitle} Score`,
         text: `🏁 I scored ${stats.score} PTS in the ${stats.timerSetting}s ${gameCategoryTitle} (${stats.difficultySetting.toUpperCase()} mode)! Can you beat my record?`,
         url: window.location.href,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(
         `🏁 I scored ${stats.score} PTS in the ${stats.timerSetting}s ${gameCategoryTitle} (${stats.difficultySetting.toUpperCase()} mode)!`
@@ -106,7 +106,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ stats, onPlayAgain, onGo
         </div>
 
         {/* Action Buttons Grid */}
-        <div className="flex flex-col gap-2 mt-4">
+        <div className="flex flex-col gap-3 mt-4">
           <button
             onClick={onPlayAgain}
             className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 text-white font-black text-base shadow-lg shadow-blue-600/30 hover:shadow-cyan-500/40 active:scale-95 transition-all flex items-center justify-center gap-2"
