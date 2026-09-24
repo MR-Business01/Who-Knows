@@ -19,7 +19,7 @@ export const AnswerOptions: React.FC<AnswerOptionsProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="w-full max-w-md mx-auto px-3 mt-2 mb-1 grid grid-cols-2 gap-2">
+    <div className="w-full max-w-md mx-auto px-3 mt-2 mb-6 grid grid-cols-2 gap-2">
       {options.map((option, idx) => {
         const isSelected = selectedOption === option;
         const isCorrectOption = option === correctBrand;
